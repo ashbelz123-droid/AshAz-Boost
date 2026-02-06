@@ -1,14 +1,13 @@
 {
-  "name": "ash-az-boost",
+  "name": "ashaz-boost",
   "version": "1.0.0",
+  "description": "AshAz Boost dashboard",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.18.2"
-  },
-  "engines": {
-    "node": "22.x"
+    "express": "^4.19.2",
+    "express-session": "^1.17.3"
   }
 }
