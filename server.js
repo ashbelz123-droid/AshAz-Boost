@@ -32,6 +32,8 @@ if (!fs.existsSync(INDEX_FILE)) {
     </html>
   `);
 }
+
+// Serve static files
 app.use(express.static(PUBLIC_DIR));
 
 // SPA fallback
