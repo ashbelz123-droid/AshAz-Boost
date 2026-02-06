@@ -5,10 +5,11 @@ const session = require("express-session");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
+// Body parser
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+// Session
 app.use(
   session({
     secret: "ashaz-boost-secret",
@@ -20,13 +21,13 @@ app.use(
 // Static files
 app.use(express.static(path.join(__dirname, "public")));
 
-// Auth check
+// Auth middleware
 function requireLogin(req, res, next) {
   if (req.session.loggedIn) return next();
   res.redirect("/login.html");
 }
 
-// Login route
+// Login handler
 app.post("/login", (req, res) => {
   const { username, password } = req.body;
 
@@ -34,7 +35,7 @@ app.post("/login", (req, res) => {
     req.session.loggedIn = true;
     res.redirect("/");
   } else {
-    res.redirect("/login.html?error=1");
+    res.redirect("/login.html");
   }
 });
 
@@ -45,7 +46,7 @@ app.get("/logout", (req, res) => {
   });
 });
 
-// Protect dashboard
+// Protected dashboard
 app.get("/", requireLogin, (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
