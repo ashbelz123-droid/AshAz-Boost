@@ -55,17 +55,27 @@
   </div>
 
   <script>
-    const user = "defaultUser"; // Replace with login system
+    const user = "defaultUser"; // Replace with your login system
     let walletBalance = 0;
     const EXCHANGE_RATE = 3500; // 1 USD = 3500 UGX
-    const MULTIPLIER = 2;
+    const MULTIPLIER = 2; // Your markup
 
-    let providerServices = []; // Will hold services fetched from provider
+    const colorMap = {
+      instagram: "description-instagram",
+      twitter: "description-twitter",
+      facebook: "description-facebook",
+      youtube: "description-youtube",
+      telegram: "description-telegram",
+      tiktok: "description-tiktok",
+      linkedin: "description-linkedin"
+    };
 
-    // Load provider services dynamically
+    let providerServices = [];
+
+    // Load provider services
     async function loadServices() {
       try {
-        const res = await fetch('/api/services'); // Backend fetches from Socialsphare
+        const res = await fetch('/api/services'); // Your backend fetches from Socialsphare
         const data = await res.json();
         providerServices = data.services;
 
@@ -74,27 +84,36 @@
 
         providerServices.forEach(service => {
           const option = document.createElement('option');
-          option.value = service.id; // Provider service ID
-          option.dataset.price = service.price_usd; // Provider price in USD
-          option.dataset.desc = `${service.name} | ${service.limit} | ${service.quality} | ${service.refill} | ${service.start}`;
+          option.value = service.platform.toLowerCase(); // e.g., instagram, twitter
+          option.dataset.id = service.id; // provider service ID
+          option.dataset.price = service.price_usd; // provider price USD
+          option.dataset.desc = `${service.name} | Limit: ${service.limit} | Quality: ${service.quality} | Refill: ${service.refill} | ${service.start}`;
           option.textContent = service.name;
           select.appendChild(option);
         });
 
         select.addEventListener('change', () => {
           const selected = select.selectedOptions[0];
-          document.getElementById('serviceDescription').innerText = selected.dataset.desc;
+          const descBox = document.getElementById('serviceDescription');
+
+          // Remove old color classes
+          Object.values(colorMap).forEach(cls => descBox.classList.remove(cls));
+
+          // Add new color class
+          descBox.classList.add(colorMap[selected.value] || "");
+
+          // Update description
+          descBox.innerText = selected.dataset.desc;
+
           updatePrice();
         });
-
       } catch(err) {
         console.error('Error loading services:', err);
       }
     }
 
-    // Calculate total price in UGX
-    function getPrice(serviceId, quantity) {
-      const option = document.querySelector(`#orderService option[value='${serviceId}']`);
+    function getPrice(servicePlatform, quantity) {
+      const option = document.querySelector(`#orderService option[value='${servicePlatform}']`);
       if (!option || !quantity) return 0;
       const providerPriceUSD = parseFloat(option.dataset.price);
       return Math.ceil(providerPriceUSD * EXCHANGE_RATE * MULTIPLIER * quantity);
@@ -107,7 +126,7 @@
       document.getElementById("totalPrice").innerText = "UGX " + total.toLocaleString();
     }
 
-    // Wallet & Deposit
+    // Wallet
     async function loadWallet() {
       try {
         const res = await fetch(`/api/wallet?user=${user}`);
@@ -167,7 +186,7 @@
         const data = await res.json();
         const ordersDiv = document.getElementById("ordersList");
         ordersDiv.innerHTML = data.orders.map(o => 
-          `<li>${o.service} - ${o.quantity} - ${o.priceUGX} UGX - ${o.status}</li>`
+          `<li>${o.service} - ${o.quantity} - UGX ${o.priceUGX.toLocaleString()} - ${o.status}</li>`
         ).join("");
       } catch(err){console.log(err);}
     }
@@ -177,4 +196,4 @@
     loadWallet();
   </script>
 </body>
-  </html>
+</html>
