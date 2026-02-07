@@ -70,6 +70,14 @@ footer { text-align:center; padding:10px; background:#1d72b8; color:white; margi
     <button class="pay-btn mtn" onclick="pay('MTN')">Pay with MTN</button>
   </div>
 
+  <!-- WALLET TOP-UP -->
+  <div class="order-box">
+    <h2>Deposit to Wallet</h2>
+    <input type="number" id="depositAmount" placeholder="Enter amount (≥ 2000 UGX)">
+    <button class="pay-btn airtel" onclick="deposit('Airtel')">Deposit via Airtel</button>
+    <button class="pay-btn mtn" onclick="deposit('MTN')">Deposit via MTN</button>
+  </div>
+
   <!-- ORDERS LIST -->
   <div class="order-box">
     <h2>My Orders</h2>
@@ -96,8 +104,8 @@ const providerPricesUSD = {
 // Conversion rate USD → UGX
 const USDtoUGX = 3500;
 
-// User initial wallet balance (this can later come from DB)
-let walletBalance = 100000;
+// User wallet balance
+let walletBalance = parseInt(localStorage.getItem('walletBalance')) || 100000;
 
 let selectedPlatform = '';
 let orders = JSON.parse(localStorage.getItem('orders')) || [];
@@ -113,7 +121,7 @@ function openForm(platform) {
   document.getElementById('platformTitle').innerText = platform + ' Boost Order';
 
   const providerUSD = providerPricesUSD[platform] || 0;
-  const yourPriceUGX = providerUSD * 2 * USDtoUGX; // 100% markup + convert
+  const yourPriceUGX = Math.round(providerUSD * 2 * USDtoUGX); // 100% markup + convert + round
   document.getElementById('yourPrice').innerText = yourPriceUGX;
   document.getElementById('quantity').value = '';
   document.getElementById('targetURL').value = '';
@@ -129,7 +137,7 @@ document.getElementById('quantity').addEventListener('input', () => {
   document.getElementById('totalPrice').innerText = qty * yourPrice;
 });
 
-// PLACE PAYMENT / DEDUCT FROM WALLET
+// PLACE ORDER / DEDUCT FROM WALLET
 function pay(channel) {
   const service = document.getElementById('serviceType').value;
   const qty = parseInt(document.getElementById('quantity').value);
@@ -142,12 +150,13 @@ function pay(channel) {
   }
 
   if (total > walletBalance) {
-    alert('Insufficient wallet balance. Please contact support.');
+    alert('Insufficient wallet balance. Please top-up your wallet.');
     return;
   }
 
   // Deduct from wallet
   walletBalance -= total;
+  localStorage.setItem('walletBalance', walletBalance);
   updateWalletDisplay();
 
   // Save order
@@ -170,6 +179,23 @@ function pay(channel) {
   document.getElementById('orderBox').classList.add('hidden');
 }
 
+// WALLET TOP-UP VIA PESAPAL
+function deposit(channel) {
+  const amount = parseInt(document.getElementById('depositAmount').value);
+  if (!amount || amount < 2000) {
+    alert('Minimum deposit is 2000 UGX.');
+    return;
+  }
+
+  // Here you would call Pesapal API with 'amount' and 'channel'
+  // For simulation:
+  walletBalance += amount;
+  localStorage.setItem('walletBalance', walletBalance);
+  updateWalletDisplay();
+  alert(`Deposit of ${amount} UGX via ${channel} successful!`);
+  document.getElementById('depositAmount').value = '';
+}
+
 // UPDATE WALLET DISPLAY
 function updateWalletDisplay() {
   document.getElementById('walletBalance').innerText = walletBalance;
@@ -190,4 +216,4 @@ renderOrders();
 </script>
 
 </body>
-</html>
+  </html>
