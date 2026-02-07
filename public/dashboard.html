@@ -27,74 +27,20 @@
     <!-- Place Order -->
     <div class="card">
       <h3>📦 Place Order</h3>
-      <select id="orderService" onchange="updatePrice()">
+      <select id="orderService">
         <option value="" disabled selected>Select a Service</option>
-        <option value="instagram">Instagram Followers</option>
-        <option value="twitter">Twitter Likes</option>
-        <option value="facebook">Facebook Likes</option>
-        <option value="youtube">YouTube Views</option>
-        <option value="telegram">Telegram Members</option>
-        <option value="tiktok">TikTok Likes</option>
-        <option value="linkedin">LinkedIn Connections</option>
       </select>
 
       <input type="number" id="orderQuantity" placeholder="Enter Quantity" oninput="updatePrice()">
       <input type="text" id="orderUrl" placeholder="Enter URL">
 
-      <!-- Service description box -->
+      <!-- Dynamic description box -->
       <div id="serviceDescription" class="description-box">
         <p>Select a service to see package details.</p>
       </div>
 
       <p>Total Price: <b id="totalPrice">UGX 0</b></p>
       <button onclick="placeOrder()">Place Order</button>
-    </div>
-
-    <!-- Services Table -->
-    <div class="card">
-      <h3>📝 Available Services</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Category</th>
-            <th>Service</th>
-            <th>Limit</th>
-            <th>Quality</th>
-            <th>Cancel</th>
-            <th>Refill</th>
-            <th>Start</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Instagram Followers</td>
-            <td>Followers</td>
-            <td>Max 10M</td>
-            <td>High Quality | Real Accounts</td>
-            <td>Enabled</td>
-            <td>No Refill ⚠️</td>
-            <td>Instant Start</td>
-          </tr>
-          <tr>
-            <td>Telegram Members</td>
-            <td>Members</td>
-            <td>Max 10M</td>
-            <td>High Quality | Real Accounts</td>
-            <td>Enabled</td>
-            <td>No Refill ⚠️</td>
-            <td>Instant Start</td>
-          </tr>
-          <tr>
-            <td>YouTube Views</td>
-            <td>Views</td>
-            <td>Max 1M</td>
-            <td>High Quality | Real Views</td>
-            <td>Enabled</td>
-            <td>No Refill ⚠️</td>
-            <td>Instant Start</td>
-          </tr>
-        </tbody>
-      </table>
     </div>
 
     <!-- Your Orders -->
@@ -109,34 +55,49 @@
   </div>
 
   <script>
-    const user = "defaultUser"; // replace with login system
+    const user = "defaultUser"; // Replace with login system
     let walletBalance = 0;
-
-    const EXCHANGE_RATE = 3500;
+    const EXCHANGE_RATE = 3500; // 1 USD = 3500 UGX
     const MULTIPLIER = 2;
-    const providerPricesUSD = {
-      instagram: 1,
-      twitter: 0.5,
-      facebook: 2,
-      youtube: 1.5,
-      telegram: 0.8,
-      tiktok: 1.2,
-      linkedin: 2
-    };
 
-    const serviceDescriptions = {
-      instagram: "Instagram Followers | Max 10M | High Quality | Real Accounts | Instant Start",
-      twitter: "Twitter Likes | Max 5M | High Quality | Real Accounts | Instant Start",
-      facebook: "Facebook Likes | Max 5M | High Quality | Real Accounts | Instant Start",
-      youtube: "YouTube Views | Max 1M | High Quality | Real Views | Instant Start",
-      telegram: "Telegram Members | Max 10M | High Quality | Real Accounts | Instant Start",
-      tiktok: "TikTok Likes | Max 5M | High Quality | Real Accounts | Instant Start",
-      linkedin: "LinkedIn Connections | Max 5M | High Quality | Real Accounts | Instant Start"
-    };
+    let providerServices = []; // Will hold services fetched from provider
 
-    function getPrice(service, quantity) {
-      if (!service || !quantity) return 0;
-      return Math.ceil(providerPricesUSD[service] * EXCHANGE_RATE * MULTIPLIER * quantity);
+    // Load provider services dynamically
+    async function loadServices() {
+      try {
+        const res = await fetch('/api/services'); // Backend fetches from Socialsphare
+        const data = await res.json();
+        providerServices = data.services;
+
+        const select = document.getElementById('orderService');
+        select.innerHTML = '<option value="" disabled selected>Select a Service</option>';
+
+        providerServices.forEach(service => {
+          const option = document.createElement('option');
+          option.value = service.id; // Provider service ID
+          option.dataset.price = service.price_usd; // Provider price in USD
+          option.dataset.desc = `${service.name} | ${service.limit} | ${service.quality} | ${service.refill} | ${service.start}`;
+          option.textContent = service.name;
+          select.appendChild(option);
+        });
+
+        select.addEventListener('change', () => {
+          const selected = select.selectedOptions[0];
+          document.getElementById('serviceDescription').innerText = selected.dataset.desc;
+          updatePrice();
+        });
+
+      } catch(err) {
+        console.error('Error loading services:', err);
+      }
+    }
+
+    // Calculate total price in UGX
+    function getPrice(serviceId, quantity) {
+      const option = document.querySelector(`#orderService option[value='${serviceId}']`);
+      if (!option || !quantity) return 0;
+      const providerPriceUSD = parseFloat(option.dataset.price);
+      return Math.ceil(providerPriceUSD * EXCHANGE_RATE * MULTIPLIER * quantity);
     }
 
     function updatePrice() {
@@ -144,11 +105,9 @@
       const quantity = document.getElementById("orderQuantity").value;
       const total = getPrice(service, quantity || 0);
       document.getElementById("totalPrice").innerText = "UGX " + total.toLocaleString();
-
-      // Update service description box
-      document.getElementById("serviceDescription").innerText = serviceDescriptions[service] || "Select a service to see package details.";
     }
 
+    // Wallet & Deposit
     async function loadWallet() {
       try {
         const res = await fetch(`/api/wallet?user=${user}`);
@@ -173,15 +132,17 @@
         const data = await res.json();
         walletBalance = data.wallet;
         document.getElementById("walletBalance").innerText = "UGX " + walletBalance.toLocaleString();
-        window.location.href = data.redirect_url;
+        if (data.redirect_url) window.location.href = data.redirect_url;
       } catch(err){alert("Deposit failed");}
     }
 
+    // Place Order
     async function placeOrder() {
       const service = document.getElementById("orderService").value;
       const quantity = document.getElementById("orderQuantity").value;
       const url = document.getElementById("orderUrl").value;
       if (!service || !quantity || !url) return alert("Please fill all fields");
+
       try {
         const res = await fetch("/api/order", {
           method: "POST",
@@ -190,6 +151,7 @@
         });
         const data = await res.json();
         if (data.error) return alert(data.error);
+
         walletBalance = data.wallet;
         document.getElementById("walletBalance").innerText = "UGX " + walletBalance.toLocaleString();
         alert("Order placed!");
@@ -198,6 +160,7 @@
       } catch(err){alert("Order failed");}
     }
 
+    // Load user orders
     async function loadOrders() {
       try {
         const res = await fetch(`/api/orders?user=${user}`);
@@ -209,7 +172,9 @@
       } catch(err){console.log(err);}
     }
 
+    // Initialize
+    loadServices();
     loadWallet();
   </script>
 </body>
-        </html>
+  </html>
