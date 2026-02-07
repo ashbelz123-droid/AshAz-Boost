@@ -1,137 +1,194 @@
-/* General reset */
+/* Reset default browser styles */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Body */
-body {
-  font-family: 'Arial', sans-serif;
-  background-color: #f4f4f9;
-  color: #333;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  flex-direction: column;
-  text-align: center;
-}
-
-/* Container for content */
+/* Container */
 .container {
-  width: 100%;
   max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
+  margin: 20px auto;
+  padding: 10px;
 }
 
 /* Header */
 header {
-  background-color: #3498db;
-  color: #fff;
-  padding: 20px;
-  margin-bottom: 20px;
-  border-radius: 10px;
+  text-align: center;
+  margin-bottom: 30px;
 }
 
 header h1 {
-  font-size: 2.5rem;
-  font-weight: 600;
+  font-size: 2.2em;
+  color: #333;
+  margin-bottom: 10px;
 }
 
-/* Cards */
+header p {
+  font-size: 1.1em;
+  color: #555;
+}
+
+/* Card style */
 .card {
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #f5f7fa, #e4e9f0);
+  border-radius: 15px;
   padding: 20px;
   margin-bottom: 20px;
-  width: 100%;
-  max-width: 600px;
-  margin: 20px auto;
+  box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
 }
 
+.card:hover {
+  transform: translateY(-3px);
+}
+
+/* Card headers */
 .card h3 {
-  font-size: 1.5rem;
-  color: #3498db;
+  font-size: 1.5em;
+  color: #222;
   margin-bottom: 15px;
 }
 
-.card input,
-.card select {
+/* Inputs */
+input[type="text"],
+input[type="number"],
+select {
   width: 100%;
-  padding: 12px;
-  margin: 10px 0;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  font-size: 1rem;
+  padding: 12px 10px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 1em;
+  transition: border-color 0.2s;
 }
 
-.card button {
-  background-color: #3498db;
-  color: white;
-  padding: 12px;
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* Buttons */
+button {
+  padding: 12px 20px;
   border: none;
-  border-radius: 5px;
-  font-size: 1.2rem;
-  width: 100%;
+  border-radius: 10px;
+  font-size: 1em;
   cursor: pointer;
-  transition: background-color 0.3s;
+  color: #fff;
+  margin-right: 10px;
+  transition: background 0.3s;
 }
 
-.card button:hover {
-  background-color: #2980b9;
+/* MTN button yellow */
+button.mtn {
+  background: #FFD700;
+  color: #000;
 }
 
-.card .note {
-  font-size: 0.9rem;
-  color: #777;
+button.mtn:hover {
+  background: #FFC700;
+}
+
+/* Airtel button red */
+button.airtel {
+  background: #FF4C4C;
+}
+
+button.airtel:hover {
+  background: #FF1C1C;
+}
+
+/* Place Order button */
+.card button:last-of-type {
+  background: #007bff;
+}
+
+.card button:last-of-type:hover {
+  background: #0056b3;
+}
+
+/* Notes */
+.note {
+  font-size: 0.9em;
+  color: #555;
   margin-top: 10px;
 }
 
-/* Wallet Balance */
-#walletBalance {
-  font-size: 1.5rem;
-  color: #27ae60;
+/* Description box */
+.description-box {
+  background: #fffbe6;
+  border-left: 5px solid #ffc107;
+  padding: 15px;
   margin-bottom: 15px;
+  border-radius: 10px;
+  font-size: 0.95em;
+  color: #333;
+}
+
+/* Orders list */
+#ordersList {
+  list-style-type: none;
+}
+
+#ordersList li {
+  padding: 10px;
+  margin-bottom: 8px;
+  background: #f0f0f0;
+  border-radius: 8px;
+  font-size: 0.95em;
 }
 
 /* Footer */
 footer {
-  margin-top: 30px;
-  font-size: 1rem;
-  color: #aaa;
+  text-align: center;
+  margin-top: 40px;
+  padding: 15px;
+  font-size: 0.9em;
+  color: #777;
 }
 
-/* Order List */
-#ordersList {
-  list-style-type: none;
-  padding: 0;
+/* Table for services */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
 }
 
-#ordersList li {
-  background-color: #ecf0f1;
-  margin-bottom: 10px;
-  padding: 10px;
-  border-radius: 5px;
+table th,
+table td {
+  padding: 12px;
   text-align: left;
-  font-size: 1rem;
+  border-bottom: 1px solid #ddd;
 }
 
-/* Buttons for MTN/Airtel */
-.mtn, .airtel {
-  background-color: #f39c12;
-  color: white;
-  margin-bottom: 10px;
+table th {
+  background-color: #007bff;
+  color: #fff;
+  border-radius: 5px 5px 0 0;
 }
 
-.mtn:hover, .airtel:hover {
-  background-color: #e67e22;
+table tr:hover {
+  background-color: #f1f1f1;
 }
 
-.footer {
-  margin-top: 30px;
-  font-size: 0.9rem;
-  color: #aaa;
+/* Responsive */
+@media (max-width: 768px) {
+  .card {
+    padding: 15px;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  select {
+    padding: 10px;
+  }
+
+  button {
+    width: 100%;
+    margin-bottom: 10px;
+  }
   }
