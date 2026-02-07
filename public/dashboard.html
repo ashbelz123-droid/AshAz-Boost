@@ -24,6 +24,7 @@
   <h1>Place an Order</h1>
   <p>Select a platform to start boosting</p>
 
+  <!-- SERVICES -->
   <div class="services">
     <div class="service-card instagram" onclick="openForm('Instagram')"><i class="fab fa-instagram"></i> Instagram</div>
     <div class="service-card twitter" onclick="openForm('Twitter')"><i class="fab fa-x-twitter"></i> Twitter</div>
@@ -48,6 +49,12 @@
 
     <button onclick="placeOrder()">Place Order</button>
   </div>
+
+  <!-- ORDERS LIST -->
+  <div class="order-box">
+    <h2>My Orders</h2>
+    <ul id="ordersList"></ul>
+  </div>
 </main>
 
 <footer>
@@ -56,6 +63,7 @@
 
 <script>
 let selectedPlatform = '';
+let orders = JSON.parse(localStorage.getItem('orders')) || [];
 
 function openForm(platform) {
   selectedPlatform = platform;
@@ -72,13 +80,36 @@ function placeOrder() {
     return;
   }
 
-  alert(
-    'Order placed!\n\n' +
-    'Platform: ' + selectedPlatform +
-    '\nService: ' + service +
-    '\nQuantity: ' + quantity
-  );
+  const order = {
+    platform: selectedPlatform,
+    service: service,
+    quantity: quantity,
+    time: new Date().toLocaleString()
+  };
+
+  orders.push(order);
+  localStorage.setItem('orders', JSON.stringify(orders));
+
+  document.getElementById('quantity').value = '';
+  renderOrders();
 }
+
+function renderOrders() {
+  const list = document.getElementById('ordersList');
+  list.innerHTML = '';
+
+  orders.forEach(order => {
+    const li = document.createElement('li');
+    li.innerText =
+      order.platform + ' | ' +
+      order.service + ' | ' +
+      order.quantity + ' | ' +
+      order.time;
+    list.appendChild(li);
+  });
+}
+
+renderOrders();
 </script>
 
 </body>
