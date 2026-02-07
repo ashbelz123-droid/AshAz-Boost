@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard - AshAzBoost</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header>
+  <nav>
+    <a href="/">Home</a>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/login">Logout</a>
+  </nav>
+</header>
+
+<main>
+  <h1>Welcome to your Dashboard</h1>
+  <p>Select a platform to start boosting:</p>
+
+  <div class="services">
+    <div class="service-card instagram">Instagram</div>
+    <div class="service-card twitter">Twitter</div>
+    <div class="service-card facebook">Facebook</div>
+    <div class="service-card youtube">YouTube</div>
+    <div class="service-card telegram">Telegram</div>
+    <div class="service-card tiktok">TikTok</div>
+    <div class="service-card linkedin">LinkedIn</div>
+  </div>
+</main>
+
+<footer>
+  <p>&copy; 2026 AshAzBoost</p>
+</footer>
+
+<script>
+  const cards = document.querySelectorAll('.service-card');
+  cards.forEach(card => {
+    card.addEventListener('click', () => {
+      alert(`You clicked ${card.textContent}! Boosting will start soon.`);
+    });
+  });
+</script>
+
+</body>
+</html>
