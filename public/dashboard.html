@@ -9,15 +9,14 @@
 <body>
   <div class="container">
     <header>
-      <h1>Welcome to AshAzBoost!</h1>
+      <h1>👤 Welcome, User</h1>
+      <p>Wallet Balance: <b id="walletBalance">UGX 0</b></p>
     </header>
 
-    <!-- Wallet Balance & Add Funds Section -->
+    <!-- Add Funds -->
     <div class="card">
-      <h3>💰 Wallet Balance</h3>
-      <p id="walletBalance">UGX 0</p>
       <h3>➕ Add Funds</h3>
-      <input type="number" id="depositAmount" placeholder="Enter amount (min 2000 UGX)" min="2000" />
+      <input type="number" id="depositAmount" placeholder="Enter amount (min 2000 UGX)" min="2000">
       <button class="mtn" onclick="deposit('MTN')">Deposit with MTN Mobile Money</button>
       <button class="airtel" onclick="deposit('AIRTEL')">Deposit with Airtel Money</button>
       <div class="note">
@@ -25,7 +24,7 @@
       </div>
     </div>
 
-    <!-- Dynamic Order Form -->
+    <!-- Place Order -->
     <div class="card">
       <h3>📦 Place Order</h3>
       <select id="orderService" onchange="updatePrice()">
@@ -40,7 +39,12 @@
       </select>
 
       <input type="number" id="orderQuantity" placeholder="Enter Quantity" oninput="updatePrice()">
-      <input type="text" id="orderUrl" placeholder="Enter your URL">
+      <input type="text" id="orderUrl" placeholder="Enter URL">
+
+      <!-- Service description box -->
+      <div id="serviceDescription" class="description-box">
+        <p>Select a service to see package details.</p>
+      </div>
 
       <p>Total Price: <b id="totalPrice">UGX 0</b></p>
       <button onclick="placeOrder()">Place Order</button>
@@ -66,7 +70,7 @@
             <td>Instagram Followers</td>
             <td>Followers</td>
             <td>Max 10M</td>
-            <td>High Quality</td>
+            <td>High Quality | Real Accounts</td>
             <td>Enabled</td>
             <td>No Refill ⚠️</td>
             <td>Instant Start</td>
@@ -75,7 +79,7 @@
             <td>Telegram Members</td>
             <td>Members</td>
             <td>Max 10M</td>
-            <td>High Quality</td>
+            <td>High Quality | Real Accounts</td>
             <td>Enabled</td>
             <td>No Refill ⚠️</td>
             <td>Instant Start</td>
@@ -84,12 +88,11 @@
             <td>YouTube Views</td>
             <td>Views</td>
             <td>Max 1M</td>
-            <td>High Quality</td>
+            <td>High Quality | Real Views</td>
             <td>Enabled</td>
             <td>No Refill ⚠️</td>
             <td>Instant Start</td>
           </tr>
-          <!-- Add more rows as needed -->
         </tbody>
       </table>
     </div>
@@ -106,10 +109,9 @@
   </div>
 
   <script>
-    const user = "defaultUser"; // Replace with login system
+    const user = "defaultUser"; // replace with login system
     let walletBalance = 0;
 
-    // Provider prices (USD)
     const EXCHANGE_RATE = 3500;
     const MULTIPLIER = 2;
     const providerPricesUSD = {
@@ -122,6 +124,16 @@
       linkedin: 2
     };
 
+    const serviceDescriptions = {
+      instagram: "Instagram Followers | Max 10M | High Quality | Real Accounts | Instant Start",
+      twitter: "Twitter Likes | Max 5M | High Quality | Real Accounts | Instant Start",
+      facebook: "Facebook Likes | Max 5M | High Quality | Real Accounts | Instant Start",
+      youtube: "YouTube Views | Max 1M | High Quality | Real Views | Instant Start",
+      telegram: "Telegram Members | Max 10M | High Quality | Real Accounts | Instant Start",
+      tiktok: "TikTok Likes | Max 5M | High Quality | Real Accounts | Instant Start",
+      linkedin: "LinkedIn Connections | Max 5M | High Quality | Real Accounts | Instant Start"
+    };
+
     function getPrice(service, quantity) {
       if (!service || !quantity) return 0;
       return Math.ceil(providerPricesUSD[service] * EXCHANGE_RATE * MULTIPLIER * quantity);
@@ -132,6 +144,9 @@
       const quantity = document.getElementById("orderQuantity").value;
       const total = getPrice(service, quantity || 0);
       document.getElementById("totalPrice").innerText = "UGX " + total.toLocaleString();
+
+      // Update service description box
+      document.getElementById("serviceDescription").innerText = serviceDescriptions[service] || "Select a service to see package details.";
     }
 
     async function loadWallet() {
@@ -197,4 +212,4 @@
     loadWallet();
   </script>
 </body>
-  </html>
+        </html>
