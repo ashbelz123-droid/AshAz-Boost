@@ -25,21 +25,73 @@
       </div>
     </div>
 
-    <!-- Place Order form -->
+    <!-- Dynamic Order Form -->
     <div class="card">
       <h3>📦 Place Order</h3>
-      <input type="text" id="orderUrl" placeholder="Enter your URL">
-      <input type="number" id="orderQuantity" placeholder="Quantity">
-      <select id="orderService">
-        <option value="instagram">Instagram</option>
-        <option value="twitter">Twitter</option>
-        <option value="facebook">Facebook</option>
-        <option value="youtube">YouTube</option>
-        <option value="telegram">Telegram</option>
-        <option value="tiktok">TikTok</option>
-        <option value="linkedin">LinkedIn</option>
+      <select id="orderService" onchange="updatePrice()">
+        <option value="" disabled selected>Select a Service</option>
+        <option value="instagram">Instagram Followers</option>
+        <option value="twitter">Twitter Likes</option>
+        <option value="facebook">Facebook Likes</option>
+        <option value="youtube">YouTube Views</option>
+        <option value="telegram">Telegram Members</option>
+        <option value="tiktok">TikTok Likes</option>
+        <option value="linkedin">LinkedIn Connections</option>
       </select>
+
+      <input type="number" id="orderQuantity" placeholder="Enter Quantity" oninput="updatePrice()">
+      <input type="text" id="orderUrl" placeholder="Enter your URL">
+
+      <p>Total Price: <b id="totalPrice">UGX 0</b></p>
       <button onclick="placeOrder()">Place Order</button>
+    </div>
+
+    <!-- Services Table -->
+    <div class="card">
+      <h3>📝 Available Services</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Service</th>
+            <th>Limit</th>
+            <th>Quality</th>
+            <th>Cancel</th>
+            <th>Refill</th>
+            <th>Start</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Instagram Followers</td>
+            <td>Followers</td>
+            <td>Max 10M</td>
+            <td>High Quality</td>
+            <td>Enabled</td>
+            <td>No Refill ⚠️</td>
+            <td>Instant Start</td>
+          </tr>
+          <tr>
+            <td>Telegram Members</td>
+            <td>Members</td>
+            <td>Max 10M</td>
+            <td>High Quality</td>
+            <td>Enabled</td>
+            <td>No Refill ⚠️</td>
+            <td>Instant Start</td>
+          </tr>
+          <tr>
+            <td>YouTube Views</td>
+            <td>Views</td>
+            <td>Max 1M</td>
+            <td>High Quality</td>
+            <td>Enabled</td>
+            <td>No Refill ⚠️</td>
+            <td>Instant Start</td>
+          </tr>
+          <!-- Add more rows as needed -->
+        </tbody>
+      </table>
     </div>
 
     <!-- Your Orders -->
@@ -53,35 +105,50 @@
     </footer>
   </div>
 
-  <!-- JAVASCRIPT -->
   <script>
-    const user = "defaultUser"; // For demo, replace with your login system
+    const user = "defaultUser"; // Replace with login system
     let walletBalance = 0;
 
-    // Update wallet balance in the UI
+    // Provider prices (USD)
+    const EXCHANGE_RATE = 3500;
+    const MULTIPLIER = 2;
+    const providerPricesUSD = {
+      instagram: 1,
+      twitter: 0.5,
+      facebook: 2,
+      youtube: 1.5,
+      telegram: 0.8,
+      tiktok: 1.2,
+      linkedin: 2
+    };
+
+    function getPrice(service, quantity) {
+      if (!service || !quantity) return 0;
+      return Math.ceil(providerPricesUSD[service] * EXCHANGE_RATE * MULTIPLIER * quantity);
+    }
+
+    function updatePrice() {
+      const service = document.getElementById("orderService").value;
+      const quantity = document.getElementById("orderQuantity").value;
+      const total = getPrice(service, quantity || 0);
+      document.getElementById("totalPrice").innerText = "UGX " + total.toLocaleString();
+    }
+
     async function loadWallet() {
       try {
         const res = await fetch(`/api/wallet?user=${user}`);
         const data = await res.json();
         walletBalance = data.wallet;
-        updateBalanceUI();
+        document.getElementById("walletBalance").innerText = "UGX " + walletBalance.toLocaleString();
         loadOrders();
-      } catch (err) {
-        console.log(err);
-      }
+      } catch(err){console.log(err);}
     }
 
-    function updateBalanceUI() {
-      document.getElementById("walletBalance").innerText = "UGX " + walletBalance.toLocaleString();
-    }
-
-    // Deposit funds (MTN/Airtel)
     async function deposit(channel) {
       const amount = parseInt(document.getElementById("depositAmount").value);
       if (!amount || amount < 2000) { alert("Minimum deposit is 2000 UGX"); return; }
       const phone = prompt(`Enter your ${channel} phone number (07XXXXXXXX):`);
       if (!phone) return;
-
       try {
         const res = await fetch("/api/deposit", {
           method: "POST",
@@ -90,38 +157,32 @@
         });
         const data = await res.json();
         walletBalance = data.wallet;
-        updateBalanceUI();
+        document.getElementById("walletBalance").innerText = "UGX " + walletBalance.toLocaleString();
         window.location.href = data.redirect_url;
-      } catch (err) {
-        alert("Deposit failed");
-      }
+      } catch(err){alert("Deposit failed");}
     }
 
-    // Place an order
     async function placeOrder() {
       const service = document.getElementById("orderService").value;
       const quantity = document.getElementById("orderQuantity").value;
       const url = document.getElementById("orderUrl").value;
       if (!service || !quantity || !url) return alert("Please fill all fields");
-
       try {
         const res = await fetch("/api/order", {
           method: "POST",
           headers: {"Content-Type":"application/json"},
-          body: JSON.stringify({ user, service, quantity, url })
+          body: JSON.stringify({user, service, quantity, url})
         });
         const data = await res.json();
         if (data.error) return alert(data.error);
         walletBalance = data.wallet;
-        updateBalanceUI();
+        document.getElementById("walletBalance").innerText = "UGX " + walletBalance.toLocaleString();
         alert("Order placed!");
         loadOrders();
-      } catch(err) {
-        alert("Order failed");
-      }
+        updatePrice();
+      } catch(err){alert("Order failed");}
     }
 
-    // Load orders from the user's account
     async function loadOrders() {
       try {
         const res = await fetch(`/api/orders?user=${user}`);
@@ -130,11 +191,10 @@
         ordersDiv.innerHTML = data.orders.map(o => 
           `<li>${o.service} - ${o.quantity} - ${o.priceUGX} UGX - ${o.status}</li>`
         ).join("");
-      } catch(err) { console.log(err); }
+      } catch(err){console.log(err);}
     }
 
-    // Initialize the dashboard
     loadWallet();
   </script>
 </body>
-</html>
+  </html>
