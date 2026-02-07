@@ -1,55 +1,82 @@
 <script>
+const user = "defaultUser"; // For demo, replace with login system
 let walletBalance = 0;
-const user = "defaultUser"; // Later, replace with real login
 
-// Fetch wallet on load
+// Load wallet
 async function loadWallet() {
   try {
     const res = await fetch(`/api/wallet?user=${user}`);
     const data = await res.json();
     walletBalance = data.wallet;
     updateBalanceUI();
+    loadOrders();
   } catch (err) {
-    console.log("Wallet fetch error", err);
+    console.log(err);
   }
 }
 
 function updateBalanceUI() {
-  document.getElementById("walletBalance").innerText =
-    "UGX " + walletBalance.toLocaleString();
+  document.getElementById("walletBalance").innerText = "UGX " + walletBalance.toLocaleString();
 }
 
+// Deposit
 async function deposit(channel) {
   const amount = parseInt(document.getElementById("depositAmount").value);
-  if (!amount || amount < 2000) {
-    alert("Minimum deposit is 2000 UGX");
-    return;
-  }
-
+  if (!amount || amount < 2000) { alert("Minimum deposit is 2000 UGX"); return; }
   const phone = prompt(`Enter your ${channel} phone number (07XXXXXXXX):`);
   if (!phone) return;
 
   try {
     const res = await fetch("/api/deposit", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ user, amount, phone, channel })
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({user, amount, channel, phone})
     });
     const data = await res.json();
-
-    if (data.redirect_url) {
-      walletBalance = data.wallet;
-      updateBalanceUI();
-      alert("Deposit credited! Redirecting to Pesapal sandbox...");
-      window.location.href = data.redirect_url;
-    } else {
-      alert(data.error || "Deposit failed");
-    }
+    walletBalance = data.wallet;
+    updateBalanceUI();
+    window.location.href = data.redirect_url;
   } catch (err) {
-    alert("Network error");
+    alert("Deposit failed");
   }
 }
 
-// Initialize wallet on page load
+// Place order
+async function placeOrder() {
+  const service = document.getElementById("orderService").value;
+  const quantity = document.getElementById("orderQuantity").value;
+  const url = document.getElementById("orderUrl").value;
+  if (!service || !quantity || !url) return alert("Please fill all fields");
+
+  try {
+    const res = await fetch("/api/order", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({ user, service, quantity, url })
+    });
+    const data = await res.json();
+    if (data.error) return alert(data.error);
+    walletBalance = data.wallet;
+    updateBalanceUI();
+    alert("Order placed!");
+    loadOrders();
+  } catch(err) {
+    alert("Order failed");
+  }
+}
+
+// Load orders
+async function loadOrders() {
+  try {
+    const res = await fetch(`/api/orders?user=${user}`);
+    const data = await res.json();
+    const ordersDiv = document.getElementById("ordersList");
+    ordersDiv.innerHTML = data.orders.map(o => 
+      `<li>${o.service} - ${o.quantity} - ${o.priceUGX} UGX - ${o.status}</li>`
+    ).join("");
+  } catch(err) { console.log(err); }
+}
+
+// Initialize
 loadWallet();
-  </script>
+      </script>
