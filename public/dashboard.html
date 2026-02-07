@@ -7,6 +7,25 @@
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<style>
+body { font-family: 'Roboto', sans-serif; margin:0; padding:0; background:#f0f2f5; }
+header { background:#1d72b8; color:white; padding:10px; }
+header nav a { color:white; margin-right:15px; text-decoration:none; font-weight:bold; }
+main { padding:20px; }
+h1 { margin-bottom:10px; }
+.services { display:flex; flex-wrap:wrap; gap:15px; margin-bottom:20px; }
+.service-card { background:white; padding:15px; border-radius:8px; flex:1 1 120px; text-align:center; cursor:pointer; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
+.service-card i { font-size:24px; margin-bottom:5px; display:block; }
+.order-box { background:white; padding:15px; border-radius:8px; margin-bottom:20px; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
+.order-box.hidden { display:none; }
+.order-box input, .order-box select { padding:8px; margin:5px 0; width:100%; }
+button.pay-btn { margin-top:10px; padding:10px; width:48%; margin-right:2%; font-weight:bold; cursor:pointer; border:none; border-radius:5px; color:white; }
+button.airtel { background:#ffcc00; color:black; }
+button.mtn { background:#fdbb30; color:black; }
+ul { list-style:none; padding:0; }
+ul li { background:#fff; margin-bottom:5px; padding:8px; border-radius:5px; box-shadow:0 1px 3px rgba(0,0,0,0.1); }
+footer { text-align:center; padding:10px; background:#1d72b8; color:white; margin-top:20px; }
+</style>
 </head>
 <body>
 
@@ -19,31 +38,34 @@
 </header>
 
 <main>
-  <!-- WELCOME MESSAGE -->
-  <h1 id="welcomeMessage">Dashboard</h1>
+  <h1 id="welcomeMessage">Welcome!</h1>
   <p>Select a platform to start boosting</p>
 
   <!-- SERVICES -->
   <div class="services">
-    <div class="service-card instagram" onclick="openForm('Instagram')"><i class="fab fa-instagram"></i> Instagram</div>
-    <div class="service-card twitter" onclick="openForm('Twitter')"><i class="fab fa-x-twitter"></i> Twitter</div>
-    <div class="service-card facebook" onclick="openForm('Facebook')"><i class="fab fa-facebook-f"></i> Facebook</div>
-    <div class="service-card youtube" onclick="openForm('YouTube')"><i class="fab fa-youtube"></i> YouTube</div>
-    <div class="service-card telegram" onclick="openForm('Telegram')"><i class="fab fa-telegram-plane"></i> Telegram</div>
-    <div class="service-card tiktok" onclick="openForm('TikTok')"><i class="fab fa-tiktok"></i> TikTok</div>
-    <div class="service-card linkedin" onclick="openForm('LinkedIn')"><i class="fab fa-linkedin-in"></i> LinkedIn</div>
+    <div class="service-card" onclick="openForm('Instagram')"><i class="fab fa-instagram"></i> Instagram</div>
+    <div class="service-card" onclick="openForm('Twitter')"><i class="fab fa-x-twitter"></i> Twitter</div>
+    <div class="service-card" onclick="openForm('Facebook')"><i class="fab fa-facebook-f"></i> Facebook</div>
+    <div class="service-card" onclick="openForm('YouTube')"><i class="fab fa-youtube"></i> YouTube</div>
+    <div class="service-card" onclick="openForm('Telegram')"><i class="fab fa-telegram-plane"></i> Telegram</div>
+    <div class="service-card" onclick="openForm('TikTok')"><i class="fab fa-tiktok"></i> TikTok</div>
+    <div class="service-card" onclick="openForm('LinkedIn')"><i class="fab fa-linkedin-in"></i> LinkedIn</div>
   </div>
 
   <!-- ORDER FORM -->
   <div id="orderBox" class="order-box hidden">
     <h2 id="platformTitle"></h2>
+    <p>Your Price per unit (UGX): <span id="yourPrice"></span></p>
+    <input type="text" id="targetURL" placeholder="Enter the profile/post URL">
     <select id="serviceType">
       <option>Followers</option>
       <option>Likes</option>
       <option>Views</option>
     </select>
     <input type="number" id="quantity" placeholder="Enter quantity">
-    <button onclick="placeOrder()">Place Order</button>
+    <p>Total: <span id="totalPrice"></span> UGX</p>
+    <button class="pay-btn airtel" onclick="pay('Airtel')">Pay with Airtel</button>
+    <button class="pay-btn mtn" onclick="pay('MTN')">Pay with MTN</button>
   </div>
 
   <!-- ORDERS LIST -->
@@ -58,6 +80,20 @@
 </footer>
 
 <script>
+// Provider prices in USD
+const providerPricesUSD = {
+  Instagram: 2,
+  Twitter: 1.5,
+  Facebook: 1.8,
+  YouTube: 2.5,
+  Telegram: 1.2,
+  TikTok: 2.2,
+  LinkedIn: 2
+};
+
+// Conversion rate USD → UGX
+const USDtoUGX = 3500;
+
 let selectedPlatform = '';
 let orders = JSON.parse(localStorage.getItem('orders')) || [];
 
@@ -65,35 +101,66 @@ let orders = JSON.parse(localStorage.getItem('orders')) || [];
 const username = localStorage.getItem('username') || 'User';
 document.getElementById('welcomeMessage').innerText = `Welcome, ${username}!`;
 
+// OPEN ORDER FORM
 function openForm(platform) {
   selectedPlatform = platform;
   document.getElementById('platformTitle').innerText = platform + ' Boost Order';
+
+  const providerUSD = providerPricesUSD[platform] || 0;
+  const yourPriceUGX = providerUSD * 2 * USDtoUGX; // 100% markup + convert
+  document.getElementById('yourPrice').innerText = yourPriceUGX;
+  document.getElementById('quantity').value = '';
+  document.getElementById('targetURL').value = '';
+  document.getElementById('totalPrice').innerText = 0;
+
   document.getElementById('orderBox').classList.remove('hidden');
 }
 
-function placeOrder() {
-  const service = document.getElementById('serviceType').value;
-  const quantity = document.getElementById('quantity').value;
+// CALCULATE TOTAL PRICE
+document.getElementById('quantity').addEventListener('input', () => {
+  const qty = parseInt(document.getElementById('quantity').value) || 0;
+  const yourPrice = parseInt(document.getElementById('yourPrice').innerText) || 0;
+  document.getElementById('totalPrice').innerText = qty * yourPrice;
+});
 
-  if (!quantity) {
-    alert('Please enter quantity');
+// PLACE PAYMENT
+function pay(channel) {
+  const service = document.getElementById('serviceType').value;
+  const qty = parseInt(document.getElementById('quantity').value);
+  const total = parseInt(document.getElementById('totalPrice').innerText);
+  const url = document.getElementById('targetURL').value.trim();
+
+  if (!qty || total === 0 || !url) {
+    alert('Please enter a valid quantity and target URL');
     return;
   }
 
-  const order = { platform: selectedPlatform, service, quantity, time: new Date().toLocaleString() };
+  // Save order
+  const order = {
+    platform: selectedPlatform,
+    service,
+    quantity: qty,
+    targetURL: url,
+    total,
+    paymentChannel: channel,
+    paid: true,
+    time: new Date().toLocaleString()
+  };
   orders.push(order);
   localStorage.setItem('orders', JSON.stringify(orders));
-
-  document.getElementById('quantity').value = '';
   renderOrders();
+
+  alert(`Payment of ${total} UGX via ${channel} completed!`);
+  document.getElementById('orderBox').classList.add('hidden');
 }
 
+// RENDER ORDERS
 function renderOrders() {
   const list = document.getElementById('ordersList');
   list.innerHTML = '';
   orders.forEach(order => {
     const li = document.createElement('li');
-    li.innerText = `${order.platform} | ${order.service} | ${order.quantity} | ${order.time}`;
+    li.innerText = `${order.platform} | ${order.service} | Qty: ${order.quantity} | URL: ${order.targetURL} | Total: ${order.total} UGX | Paid via: ${order.paymentChannel} | ${order.time}`;
     list.appendChild(li);
   });
 }
@@ -102,4 +169,4 @@ renderOrders();
 </script>
 
 </body>
-      </html>
+  </html>
