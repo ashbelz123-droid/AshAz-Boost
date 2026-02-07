@@ -4,9 +4,7 @@ const mongoose = require('mongoose');
 const app = express();
 app.use(express.json());
 
-/* --------------------
-   MongoDB ONLY
--------------------- */
+// MongoDB connection
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('✅ MongoDB connected'))
   .catch(err => {
@@ -14,25 +12,12 @@ mongoose.connect(process.env.MONGO_URI)
     process.exit(1);
   });
 
-/* --------------------
-   Routes
--------------------- */
-app.get('/', (req, res) => {
-  res.send('🚀 AshAzBoost is LIVE');
-});
-
+// Routes
+app.get('/', (req, res) => res.send('🚀 AshAzBoost is LIVE'));
 app.get('/dashboard', (req, res) => {
-  res.json({
-    users: 1248,
-    orders: 312,
-    revenue: 4820
-  });
+  res.json({ users: 1248, orders: 312, revenue: 4820 });
 });
 
-/* --------------------
-   Start Server (RENDER)
--------------------- */
+// Start server (RENDER requires process.env.PORT)
 const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
