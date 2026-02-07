@@ -13,6 +13,7 @@ header { background:#1d72b8; color:white; padding:10px; }
 header nav a { color:white; margin-right:15px; text-decoration:none; font-weight:bold; }
 main { padding:20px; }
 h1 { margin-bottom:10px; }
+.wallet { margin-bottom:15px; font-weight:bold; }
 .services { display:flex; flex-wrap:wrap; gap:15px; margin-bottom:20px; }
 .service-card { background:white; padding:15px; border-radius:8px; flex:1 1 120px; text-align:center; cursor:pointer; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
 .service-card i { font-size:24px; margin-bottom:5px; display:block; }
@@ -39,6 +40,7 @@ footer { text-align:center; padding:10px; background:#1d72b8; color:white; margi
 
 <main>
   <h1 id="welcomeMessage">Welcome!</h1>
+  <p class="wallet">Wallet Balance: <span id="walletBalance"></span> UGX</p>
   <p>Select a platform to start boosting</p>
 
   <!-- SERVICES -->
@@ -94,12 +96,16 @@ const providerPricesUSD = {
 // Conversion rate USD → UGX
 const USDtoUGX = 3500;
 
+// User initial wallet balance (this can later come from DB)
+let walletBalance = 100000;
+
 let selectedPlatform = '';
 let orders = JSON.parse(localStorage.getItem('orders')) || [];
 
 // Show username from login
 const username = localStorage.getItem('username') || 'User';
 document.getElementById('welcomeMessage').innerText = `Welcome, ${username}!`;
+updateWalletDisplay();
 
 // OPEN ORDER FORM
 function openForm(platform) {
@@ -123,17 +129,26 @@ document.getElementById('quantity').addEventListener('input', () => {
   document.getElementById('totalPrice').innerText = qty * yourPrice;
 });
 
-// PLACE PAYMENT
+// PLACE PAYMENT / DEDUCT FROM WALLET
 function pay(channel) {
   const service = document.getElementById('serviceType').value;
   const qty = parseInt(document.getElementById('quantity').value);
   const total = parseInt(document.getElementById('totalPrice').innerText);
   const url = document.getElementById('targetURL').value.trim();
 
-  if (!qty || total === 0 || !url) {
-    alert('Please enter a valid quantity and target URL');
+  if (!qty || total < 2000 || !url) {
+    alert('Minimum order is 2000 UGX and you must provide a valid quantity and URL.');
     return;
   }
+
+  if (total > walletBalance) {
+    alert('Insufficient wallet balance. Please contact support.');
+    return;
+  }
+
+  // Deduct from wallet
+  walletBalance -= total;
+  updateWalletDisplay();
 
   // Save order
   const order = {
@@ -144,6 +159,7 @@ function pay(channel) {
     total,
     paymentChannel: channel,
     paid: true,
+    remainingWallet: walletBalance,
     time: new Date().toLocaleString()
   };
   orders.push(order);
@@ -154,13 +170,18 @@ function pay(channel) {
   document.getElementById('orderBox').classList.add('hidden');
 }
 
+// UPDATE WALLET DISPLAY
+function updateWalletDisplay() {
+  document.getElementById('walletBalance').innerText = walletBalance;
+}
+
 // RENDER ORDERS
 function renderOrders() {
   const list = document.getElementById('ordersList');
   list.innerHTML = '';
   orders.forEach(order => {
     const li = document.createElement('li');
-    li.innerText = `${order.platform} | ${order.service} | Qty: ${order.quantity} | URL: ${order.targetURL} | Total: ${order.total} UGX | Paid via: ${order.paymentChannel} | ${order.time}`;
+    li.innerText = `${order.platform} | ${order.service} | Qty: ${order.quantity} | URL: ${order.targetURL} | Total: ${order.total} UGX | Paid via: ${order.paymentChannel} | Remaining Wallet: ${order.remainingWallet} UGX | ${order.time}`;
     list.appendChild(li);
   });
 }
@@ -169,4 +190,4 @@ renderOrders();
 </script>
 
 </body>
-  </html>
+</html>
