@@ -1,23 +1,16 @@
 const express = require('express');
-const mongoose = require('mongoose');
-
+const path = require('path');
 const app = express();
-app.use(express.json());
+const PORT = process.env.PORT || 3000;
 
-// MongoDB connection
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('✅ MongoDB connected'))
-  .catch(err => {
-    console.error('❌ MongoDB error:', err);
-    process.exit(1);
-  });
+// Serve static files like CSS, JS, images
+app.use(express.static(path.join(__dirname, '/')));
 
-// Routes
-app.get('/', (req, res) => res.send('🚀 AshAzBoost is LIVE'));
-app.get('/dashboard', (req, res) => {
-  res.json({ users: 1248, orders: 312, revenue: 4820 });
+// Route for home page
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Start server (Render requires process.env.PORT)
-const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
