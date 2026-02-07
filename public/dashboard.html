@@ -19,9 +19,11 @@
 </header>
 
 <main>
-  <h1>Place an Order</h1>
+  <!-- WELCOME MESSAGE -->
+  <h1 id="welcomeMessage">Dashboard</h1>
   <p>Select a platform to start boosting</p>
 
+  <!-- SERVICES -->
   <div class="services">
     <div class="service-card instagram" onclick="openForm('Instagram')"><i class="fab fa-instagram"></i> Instagram</div>
     <div class="service-card twitter" onclick="openForm('Twitter')"><i class="fab fa-x-twitter"></i> Twitter</div>
@@ -32,6 +34,7 @@
     <div class="service-card linkedin" onclick="openForm('LinkedIn')"><i class="fab fa-linkedin-in"></i> LinkedIn</div>
   </div>
 
+  <!-- ORDER FORM -->
   <div id="orderBox" class="order-box hidden">
     <h2 id="platformTitle"></h2>
     <select id="serviceType">
@@ -43,6 +46,7 @@
     <button onclick="placeOrder()">Place Order</button>
   </div>
 
+  <!-- ORDERS LIST -->
   <div class="order-box">
     <h2>My Orders</h2>
     <ul id="ordersList"></ul>
@@ -56,6 +60,10 @@
 <script>
 let selectedPlatform = '';
 let orders = JSON.parse(localStorage.getItem('orders')) || [];
+
+// Show username from login
+const username = localStorage.getItem('username') || 'User';
+document.getElementById('welcomeMessage').innerText = `Welcome, ${username}!`;
 
 function openForm(platform) {
   selectedPlatform = platform;
@@ -94,4 +102,4 @@ renderOrders();
 </script>
 
 </body>
-  </html>
+      </html>
