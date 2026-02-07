@@ -6,17 +6,15 @@ const PORT = process.env.PORT || 10000;
 // Serve static files from public folder
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Home page
+// Routes
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Login page
 app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
-// Dashboard page
 app.get('/dashboard', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
 });
