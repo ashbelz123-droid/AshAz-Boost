@@ -1,126 +1,184 @@
 const express = require("express");
 const path = require("path");
-const fs = require("fs");
+const bodyParser = require("body-parser");
 const cors = require("cors");
 
 const app = express();
 const PORT = process.env.PORT || 10000;
 
+// Middleware
 app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "public")));
 
-// ================================
-// WALLET & ORDERS STORAGE (JSON)
-// ================================
-const DATA_FILE = path.join(__dirname, "data.json");
+// ---------------------
+// SANDBOX DATA
+// ---------------------
 
-let data = { users: {} };
+let walletDB = { defaultUser: 5000 }; // starting UGX
+let ordersDB = { defaultUser: [] };
 
-// Load data from file
-if (fs.existsSync(DATA_FILE)) {
-  data = JSON.parse(fs.readFileSync(DATA_FILE));
-}
+// Example services (simulating provider)
+const services = [
+  {
+    id: 1,
+    platform: "instagram",
+    name: "Instagram Followers",
+    price_usd: 0.5,
+    limit: "Max 10,000",
+    quality: "High Quality",
+    refill: "No Refill",
+    start: "Instant Start"
+  },
+  {
+    id: 2,
+    platform: "twitter",
+    name: "Twitter Likes",
+    price_usd: 0.2,
+    limit: "Max 5,000",
+    quality: "Real Accounts",
+    refill: "Enabled",
+    start: "Instant Start"
+  },
+  {
+    id: 3,
+    platform: "facebook",
+    name: "Facebook Likes",
+    price_usd: 0.3,
+    limit: "Max 10,000",
+    quality: "High Quality",
+    refill: "No Refill",
+    start: "Instant Start"
+  },
+  {
+    id: 4,
+    platform: "youtube",
+    name: "YouTube Views",
+    price_usd: 0.1,
+    limit: "Max 50,000",
+    quality: "Real Views",
+    refill: "Enabled",
+    start: "Instant Start"
+  },
+  {
+    id: 5,
+    platform: "telegram",
+    name: "Telegram Members",
+    price_usd: 1.0,
+    limit: "Max 10M",
+    quality: "High Quality",
+    refill: "No Refill",
+    start: "Instant Start"
+  },
+  {
+    id: 6,
+    platform: "tiktok",
+    name: "TikTok Likes",
+    price_usd: 0.25,
+    limit: "Max 10,000",
+    quality: "High Quality",
+    refill: "No Refill",
+    start: "Instant Start"
+  },
+  {
+    id: 7,
+    platform: "linkedin",
+    name: "LinkedIn Connections",
+    price_usd: 0.4,
+    limit: "Max 5,000",
+    quality: "Real Accounts",
+    refill: "No Refill",
+    start: "Instant Start"
+  }
+];
 
-// Save data
-function saveData() {
-  fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
-}
-
-// ================================
-// PROVIDER PRICES
-// ================================
-const EXCHANGE_RATE = 3500; // 1 USD = 3500 UGX
-const MULTIPLIER = 2; // Your price = provider price * 2
-
-// Example provider prices (normally fetched via API)
-const providerPricesUSD = {
-  instagram: 1, // $1
-  twitter: 0.5,
-  facebook: 2,
-  youtube: 1.5,
-  telegram: 0.8,
-  tiktok: 1.2,
-  linkedin: 2
-};
-
-// Convert provider prices to your UGX price
-function getPrice(service) {
-  if (!providerPricesUSD[service]) return 0;
-  return Math.ceil(providerPricesUSD[service] * EXCHANGE_RATE * MULTIPLIER);
-}
-
-// ================================
+// ---------------------
 // ROUTES
-// ================================
-app.get("/", (req, res) => res.sendFile(path.join(__dirname, "public", "index.html")));
-app.get("/login", (req, res) => res.sendFile(path.join(__dirname, "public", "login.html")));
-app.get("/dashboard", (req, res) => res.sendFile(path.join(__dirname, "public", "dashboard.html")));
+// ---------------------
+
+// Health check
 app.get("/health", (req, res) => res.send("OK"));
 
-// ================================
-// API: WALLET
-// ================================
+// Serve frontend
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+app.get("/login", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "login.html"));
+});
+
+app.get("/dashboard", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "dashboard.html"));
+});
+
+// ---------------------
+// API ROUTES
+// ---------------------
+
+// Get services
+app.get("/api/services", (req, res) => {
+  res.json({ services });
+});
+
+// Get wallet balance
 app.get("/api/wallet", (req, res) => {
   const user = req.query.user || "defaultUser";
-  if (!data.users[user]) data.users[user] = { wallet: 0, orders: [] };
-  res.json({ wallet: data.users[user].wallet });
+  res.json({ wallet: walletDB[user] || 0 });
 });
 
-// ================================
-// API: DEPOSIT (Pesapal sandbox simulation)
-// ================================
+// Deposit (MTN/Airtel)
 app.post("/api/deposit", (req, res) => {
   const { user = "defaultUser", amount, channel, phone } = req.body;
-  if (!amount || amount < 2000) return res.status(400).json({ error: "Minimum deposit is 2000 UGX" });
+  if (!amount || amount < 2000) return res.json({ error: "Minimum deposit is 2000 UGX" });
+  if (!walletDB[user]) walletDB[user] = 0;
+  walletDB[user] += parseInt(amount);
 
-  if (!data.users[user]) data.users[user] = { wallet: 0, orders: [] };
-  data.users[user].wallet += Number(amount);
-  saveData();
-
-  // Generate Pesapal sandbox payment URL (simulation)
-  const pesapalUrl = `https://www.sandbox.pesapal.com/pay?amount=${amount}&phone=${phone}&channel=${channel}`;
-
-  res.json({ wallet: data.users[user].wallet, redirect_url: pesapalUrl });
+  // Simulate redirect URL (payment page)
+  res.json({ wallet: walletDB[user], redirect_url: null });
 });
 
-// ================================
-// API: CREATE ORDER
-// ================================
+// Place order
 app.post("/api/order", (req, res) => {
   const { user = "defaultUser", service, quantity, url } = req.body;
-  if (!service || !quantity || !url) return res.status(400).json({ error: "Missing order info" });
+  if (!service || !quantity || !url) return res.json({ error: "Fill all fields" });
+  
+  const selectedService = services.find(s => s.platform === service);
+  if (!selectedService) return res.json({ error: "Service not found" });
 
-  if (!data.users[user]) data.users[user] = { wallet: 0, orders: [] };
+  const EXCHANGE_RATE = 3500;
+  const MULTIPLIER = 2;
+  const totalPrice = Math.ceil(selectedService.price_usd * EXCHANGE_RATE * MULTIPLIER * quantity);
 
-  const priceUGX = getPrice(service) * Number(quantity);
-
-  if (data.users[user].wallet < priceUGX) return res.status(400).json({ error: "Insufficient wallet balance" });
+  if ((walletDB[user] || 0) < totalPrice) return res.json({ error: "Insufficient wallet balance" });
 
   // Deduct wallet
-  data.users[user].wallet -= priceUGX;
+  walletDB[user] -= totalPrice;
 
   // Save order
-  const order = { service, quantity, url, priceUGX, status: "pending", createdAt: new Date().toISOString() };
-  data.users[user].orders.push(order);
-  saveData();
+  const order = {
+    service: selectedService.name,
+    quantity,
+    url,
+    priceUGX: totalPrice,
+    status: "Pending"
+  };
 
-  res.json({ message: "Order placed!", wallet: data.users[user].wallet, order });
+  if (!ordersDB[user]) ordersDB[user] = [];
+  ordersDB[user].push(order);
+
+  res.json({ wallet: walletDB[user], order });
 });
 
-// ================================
-// API: GET ORDERS
-// ================================
+// Get user orders
 app.get("/api/orders", (req, res) => {
   const user = req.query.user || "defaultUser";
-  if (!data.users[user]) data.users[user] = { wallet: 0, orders: [] };
-  res.json({ orders: data.users[user].orders });
+  res.json({ orders: ordersDB[user] || [] });
 });
 
-// ================================
+// ---------------------
 // START SERVER
-// ================================
+// ---------------------
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`✅ Server running on port ${PORT}`);
 });
