@@ -1,219 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard - AshAzBoost</title>
-<link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-<style>
-body { font-family: 'Roboto', sans-serif; margin:0; padding:0; background:#f0f2f5; }
-header { background:#1d72b8; color:white; padding:10px; }
-header nav a { color:white; margin-right:15px; text-decoration:none; font-weight:bold; }
-main { padding:20px; }
-h1 { margin-bottom:10px; }
-.wallet { margin-bottom:15px; font-weight:bold; }
-.services { display:flex; flex-wrap:wrap; gap:15px; margin-bottom:20px; }
-.service-card { background:white; padding:15px; border-radius:8px; flex:1 1 120px; text-align:center; cursor:pointer; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
-.service-card i { font-size:24px; margin-bottom:5px; display:block; }
-.order-box { background:white; padding:15px; border-radius:8px; margin-bottom:20px; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
-.order-box.hidden { display:none; }
-.order-box input, .order-box select { padding:8px; margin:5px 0; width:100%; }
-button.pay-btn { margin-top:10px; padding:10px; width:48%; margin-right:2%; font-weight:bold; cursor:pointer; border:none; border-radius:5px; color:white; }
-button.airtel { background:#ffcc00; color:black; }
-button.mtn { background:#fdbb30; color:black; }
-ul { list-style:none; padding:0; }
-ul li { background:#fff; margin-bottom:5px; padding:8px; border-radius:5px; box-shadow:0 1px 3px rgba(0,0,0,0.1); }
-footer { text-align:center; padding:10px; background:#1d72b8; color:white; margin-top:20px; }
-</style>
+  <meta charset="UTF-8" />
+  <title>AshAzBoost – Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #e5e7eb;
+      margin: 0;
+      padding: 15px;
+    }
+
+    .card {
+      background: #020617;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.4);
+    }
+
+    h2, h3 {
+      margin: 0 0 10px;
+    }
+
+    .balance {
+      font-size: 26px;
+      font-weight: bold;
+      color: #22c55e;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: none;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border-radius: 6px;
+      border: none;
+      font-size: 16px;
+      font-weight: bold;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+
+    .mtn {
+      background: #ffcc00;
+      color: #000;
+    }
+
+    .airtel {
+      background: #e11d48;
+      color: #fff;
+    }
+
+    .note {
+      font-size: 13px;
+      color: #94a3b8;
+      margin-top: 8px;
+    }
+  </style>
 </head>
 <body>
 
-<header>
-  <nav>
-    <a href="/">Home</a>
-    <a href="/dashboard">Dashboard</a>
-    <a href="/login">Logout</a>
-  </nav>
-</header>
-
-<main>
-  <h1 id="welcomeMessage">Welcome!</h1>
-  <p class="wallet">Wallet Balance: <span id="walletBalance"></span> UGX</p>
-  <p>Select a platform to start boosting</p>
-
-  <!-- SERVICES -->
-  <div class="services">
-    <div class="service-card" onclick="openForm('Instagram')"><i class="fab fa-instagram"></i> Instagram</div>
-    <div class="service-card" onclick="openForm('Twitter')"><i class="fab fa-x-twitter"></i> Twitter</div>
-    <div class="service-card" onclick="openForm('Facebook')"><i class="fab fa-facebook-f"></i> Facebook</div>
-    <div class="service-card" onclick="openForm('YouTube')"><i class="fab fa-youtube"></i> YouTube</div>
-    <div class="service-card" onclick="openForm('Telegram')"><i class="fab fa-telegram-plane"></i> Telegram</div>
-    <div class="service-card" onclick="openForm('TikTok')"><i class="fab fa-tiktok"></i> TikTok</div>
-    <div class="service-card" onclick="openForm('LinkedIn')"><i class="fab fa-linkedin-in"></i> LinkedIn</div>
+  <!-- WALLET CARD -->
+  <div class="card">
+    <h2>👤 Welcome, User</h2>
+    <p>Wallet Balance</p>
+    <div class="balance" id="walletBalance">UGX 0</div>
   </div>
 
-  <!-- ORDER FORM -->
-  <div id="orderBox" class="order-box hidden">
-    <h2 id="platformTitle"></h2>
-    <p>Your Price per unit (UGX): <span id="yourPrice"></span></p>
-    <input type="text" id="targetURL" placeholder="Enter the profile/post URL">
-    <select id="serviceType">
-      <option>Followers</option>
-      <option>Likes</option>
-      <option>Views</option>
-    </select>
-    <input type="number" id="quantity" placeholder="Enter quantity">
-    <p>Total: <span id="totalPrice"></span> UGX</p>
-    <button class="pay-btn airtel" onclick="pay('Airtel')">Pay with Airtel</button>
-    <button class="pay-btn mtn" onclick="pay('MTN')">Pay with MTN</button>
+  <!-- DEPOSIT CARD -->
+  <div class="card">
+    <h3>➕ Add Funds</h3>
+
+    <input
+      type="number"
+      id="depositAmount"
+      placeholder="Enter amount (min 2000 UGX)"
+      min="2000"
+    />
+
+    <button class="mtn" onclick="deposit('MTN')">
+      Deposit with MTN Mobile Money
+    </button>
+
+    <button class="airtel" onclick="deposit('AIRTEL')">
+      Deposit with Airtel Money
+    </button>
+
+    <div class="note">
+      Minimum deposit is <b>2000 UGX</b>.  
+      Wallet is used automatically when you place orders.
+    </div>
   </div>
 
-  <!-- WALLET TOP-UP -->
-  <div class="order-box">
-    <h2>Deposit to Wallet</h2>
-    <input type="number" id="depositAmount" placeholder="Enter amount (≥ 2000 UGX)">
-    <button class="pay-btn airtel" onclick="deposit('Airtel')">Deposit via Airtel</button>
-    <button class="pay-btn mtn" onclick="deposit('MTN')">Deposit via MTN</button>
+  <!-- FUTURE ORDERS CARD -->
+  <div class="card">
+    <h3>📦 Orders</h3>
+    <p>Orders will deduct automatically from wallet balance.</p>
+    <p>Status syncing with provider API will be added next.</p>
   </div>
 
-  <!-- ORDERS LIST -->
-  <div class="order-box">
-    <h2>My Orders</h2>
-    <ul id="ordersList"></ul>
-  </div>
-</main>
+  <!-- JAVASCRIPT -->
+  <script>
+    let walletBalance = 0;
 
-<footer>
-  <p>© 2026 AshAzBoost</p>
-</footer>
+    function updateBalanceUI() {
+      document.getElementById("walletBalance").innerText =
+        "UGX " + walletBalance.toLocaleString();
+    }
 
-<script>
-// Provider prices in USD
-const providerPricesUSD = {
-  Instagram: 2,
-  Twitter: 1.5,
-  Facebook: 1.8,
-  YouTube: 2.5,
-  Telegram: 1.2,
-  TikTok: 2.2,
-  LinkedIn: 2
-};
+    updateBalanceUI();
 
-// Conversion rate USD → UGX
-const USDtoUGX = 3500;
+    async function deposit(channel) {
+      const amount = parseInt(
+        document.getElementById("depositAmount").value
+      );
 
-// User wallet balance
-let walletBalance = parseInt(localStorage.getItem('walletBalance')) || 100000;
+      if (!amount || amount < 2000) {
+        alert("Minimum deposit is 2000 UGX");
+        return;
+      }
 
-let selectedPlatform = '';
-let orders = JSON.parse(localStorage.getItem('orders')) || [];
+      const phone = prompt(
+        "Enter your " + channel + " phone number (07XXXXXXXX):"
+      );
 
-// Show username from login
-const username = localStorage.getItem('username') || 'User';
-document.getElementById('welcomeMessage').innerText = `Welcome, ${username}!`;
-updateWalletDisplay();
+      if (!phone) return;
 
-// OPEN ORDER FORM
-function openForm(platform) {
-  selectedPlatform = platform;
-  document.getElementById('platformTitle').innerText = platform + ' Boost Order';
+      try {
+        const response = await fetch("/api/deposit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            amount: amount,
+            phone: phone,
+            channel: channel
+          })
+        });
 
-  const providerUSD = providerPricesUSD[platform] || 0;
-  const yourPriceUGX = Math.round(providerUSD * 2 * USDtoUGX); // 100% markup + convert + round
-  document.getElementById('yourPrice').innerText = yourPriceUGX;
-  document.getElementById('quantity').value = '';
-  document.getElementById('targetURL').value = '';
-  document.getElementById('totalPrice').innerText = 0;
+        const data = await response.json();
 
-  document.getElementById('orderBox').classList.remove('hidden');
-}
-
-// CALCULATE TOTAL PRICE
-document.getElementById('quantity').addEventListener('input', () => {
-  const qty = parseInt(document.getElementById('quantity').value) || 0;
-  const yourPrice = parseInt(document.getElementById('yourPrice').innerText) || 0;
-  document.getElementById('totalPrice').innerText = qty * yourPrice;
-});
-
-// PLACE ORDER / DEDUCT FROM WALLET
-function pay(channel) {
-  const service = document.getElementById('serviceType').value;
-  const qty = parseInt(document.getElementById('quantity').value);
-  const total = parseInt(document.getElementById('totalPrice').innerText);
-  const url = document.getElementById('targetURL').value.trim();
-
-  if (!qty || total < 2000 || !url) {
-    alert('Minimum order is 2000 UGX and you must provide a valid quantity and URL.');
-    return;
-  }
-
-  if (total > walletBalance) {
-    alert('Insufficient wallet balance. Please top-up your wallet.');
-    return;
-  }
-
-  // Deduct from wallet
-  walletBalance -= total;
-  localStorage.setItem('walletBalance', walletBalance);
-  updateWalletDisplay();
-
-  // Save order
-  const order = {
-    platform: selectedPlatform,
-    service,
-    quantity: qty,
-    targetURL: url,
-    total,
-    paymentChannel: channel,
-    paid: true,
-    remainingWallet: walletBalance,
-    time: new Date().toLocaleString()
-  };
-  orders.push(order);
-  localStorage.setItem('orders', JSON.stringify(orders));
-  renderOrders();
-
-  alert(`Payment of ${total} UGX via ${channel} completed!`);
-  document.getElementById('orderBox').classList.add('hidden');
-}
-
-// WALLET TOP-UP VIA PESAPAL
-function deposit(channel) {
-  const amount = parseInt(document.getElementById('depositAmount').value);
-  if (!amount || amount < 2000) {
-    alert('Minimum deposit is 2000 UGX.');
-    return;
-  }
-
-  // Here you would call Pesapal API with 'amount' and 'channel'
-  // For simulation:
-  walletBalance += amount;
-  localStorage.setItem('walletBalance', walletBalance);
-  updateWalletDisplay();
-  alert(`Deposit of ${amount} UGX via ${channel} successful!`);
-  document.getElementById('depositAmount').value = '';
-}
-
-// UPDATE WALLET DISPLAY
-function updateWalletDisplay() {
-  document.getElementById('walletBalance').innerText = walletBalance;
-}
-
-// RENDER ORDERS
-function renderOrders() {
-  const list = document.getElementById('ordersList');
-  list.innerHTML = '';
-  orders.forEach(order => {
-    const li = document.createElement('li');
-    li.innerText = `${order.platform} | ${order.service} | Qty: ${order.quantity} | URL: ${order.targetURL} | Total: ${order.total} UGX | Paid via: ${order.paymentChannel} | Remaining Wallet: ${order.remainingWallet} UGX | ${order.time}`;
-    list.appendChild(li);
-  });
-}
-
-renderOrders();
-</script>
+        if (data.redirect_url) {
+          window.location.href = data.redirect_url;
+        } else {
+          alert("Payment initialization failed");
+        }
+      } catch (err) {
+        alert("Network error");
+      }
+    }
+  </script>
 
 </body>
   </html>
