@@ -1,9 +1,14 @@
-/* Reset default browser styles */
+/* Reset */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background: #f4f6f9;
+  color: #333;
 }
 
 /* Container */
@@ -21,8 +26,8 @@ header {
 
 header h1 {
   font-size: 2.2em;
-  color: #333;
-  margin-bottom: 10px;
+  color: #222;
+  margin-bottom: 5px;
 }
 
 header p {
@@ -30,24 +35,23 @@ header p {
   color: #555;
 }
 
-/* Card style */
+/* Card base style */
 .card {
-  background: linear-gradient(135deg, #f5f7fa, #e4e9f0);
+  background: #fff;
   border-radius: 15px;
   padding: 20px;
   margin-bottom: 20px;
-  box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-  transition: transform 0.2s;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+  transition: transform 0.2s, box-shadow 0.3s;
 }
 
 .card:hover {
   transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.12);
 }
 
-/* Card headers */
 .card h3 {
   font-size: 1.5em;
-  color: #222;
   margin-bottom: 15px;
 }
 
@@ -56,7 +60,7 @@ input[type="text"],
 input[type="number"],
 select {
   width: 100%;
-  padding: 12px 10px;
+  padding: 12px 15px;
   margin-bottom: 15px;
   border-radius: 10px;
   border: 1px solid #ccc;
@@ -64,8 +68,7 @@ select {
   transition: border-color 0.2s;
 }
 
-input[type="text"]:focus,
-input[type="number"]:focus,
+input:focus,
 select:focus {
   border-color: #007bff;
   outline: none;
@@ -80,26 +83,23 @@ button {
   cursor: pointer;
   color: #fff;
   margin-right: 10px;
-  transition: background 0.3s;
+  transition: transform 0.2s, filter 0.2s;
 }
 
-/* MTN button yellow */
+button:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+/* MTN button */
 button.mtn {
   background: #FFD700;
   color: #000;
 }
 
-button.mtn:hover {
-  background: #FFC700;
-}
-
-/* Airtel button red */
+/* Airtel button */
 button.airtel {
   background: #FF4C4C;
-}
-
-button.airtel:hover {
-  background: #FF1C1C;
 }
 
 /* Place Order button */
@@ -107,11 +107,7 @@ button.airtel:hover {
   background: #007bff;
 }
 
-.card button:last-of-type:hover {
-  background: #0056b3;
-}
-
-/* Notes */
+/* Note */
 .note {
   font-size: 0.9em;
   color: #555;
@@ -127,7 +123,17 @@ button.airtel:hover {
   border-radius: 10px;
   font-size: 0.95em;
   color: #333;
+  transition: border-color 0.3s, background 0.3s;
 }
+
+/* Social colored description boxes */
+.description-instagram { border-color: #e1306c; background: #ffe6f0; }
+.description-twitter   { border-color: #1DA1F2; background: #e6f4ff; }
+.description-facebook  { border-color: #1877F2; background: #e6f0ff; }
+.description-youtube   { border-color: #FF0000; background: #ffe6e6; }
+.description-telegram  { border-color: #0088cc; background: #e6f7ff; }
+.description-tiktok    { border-color: #000000; background: #e6e6e6; color:#000; }
+.description-linkedin  { border-color: #0a66c2; background: #e6f0ff; }
 
 /* Orders list */
 #ordersList {
@@ -135,27 +141,24 @@ button.airtel:hover {
 }
 
 #ordersList li {
-  padding: 10px;
+  padding: 12px;
   margin-bottom: 8px;
   background: #f0f0f0;
   border-radius: 8px;
   font-size: 0.95em;
+  transition: transform 0.2s;
 }
 
-/* Footer */
-footer {
-  text-align: center;
-  margin-top: 40px;
-  padding: 15px;
-  font-size: 0.9em;
-  color: #777;
+#ordersList li:hover {
+  transform: translateY(-2px);
+  background: #e0e0e0;
 }
 
 /* Table for services */
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 10px;
+  margin-top: 15px;
 }
 
 table th,
@@ -175,20 +178,18 @@ table tr:hover {
   background-color: #f1f1f1;
 }
 
+/* Footer */
+footer {
+  text-align: center;
+  margin-top: 40px;
+  padding: 15px;
+  font-size: 0.9em;
+  color: #777;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
-  .card {
-    padding: 15px;
-  }
-
-  input[type="text"],
-  input[type="number"],
-  select {
-    padding: 10px;
-  }
-
-  button {
-    width: 100%;
-    margin-bottom: 10px;
-  }
-  }
+  .card { padding: 15px; }
+  input, select { padding: 10px; }
+  button { width: 100%; margin-bottom: 10px; }
+}
