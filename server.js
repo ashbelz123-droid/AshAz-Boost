@@ -18,6 +18,6 @@ app.get('/dashboard', (req, res) => {
   res.json({ users: 1248, orders: 312, revenue: 4820 });
 });
 
-// Start server (RENDER requires process.env.PORT)
+// Start server (Render requires process.env.PORT)
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
