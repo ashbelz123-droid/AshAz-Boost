@@ -40,7 +40,11 @@
   const cards = document.querySelectorAll('.service-card');
   cards.forEach(card => {
     card.addEventListener('click', () => {
-      alert(`You clicked ${card.textContent}! Boosting will start soon.`);
+      const popup = document.createElement('div');
+      popup.className = 'boost-popup';
+      popup.textContent = `Boosting ${card.textContent}... ✅`;
+      document.body.appendChild(popup);
+      setTimeout(() => popup.remove(), 2000);
     });
   });
 </script>
