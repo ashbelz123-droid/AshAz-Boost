@@ -1,6 +1,3 @@
-// --------------------------
-// server.js
-// --------------------------
 const express = require('express');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
@@ -9,16 +6,10 @@ require('dotenv').config();
 
 const app = express();
 
-// --------------------------
-// Middleware
-// --------------------------
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public')); // serve static files
+app.use(express.static('public'));
 
-// --------------------------
-// MongoDB Connection
-// --------------------------
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -26,9 +17,6 @@ mongoose.connect(process.env.MONGO_URI, {
 .then(() => console.log('✅ MongoDB Connected'))
 .catch(err => console.error('❌ MongoDB connection error:', err));
 
-// --------------------------
-// Session with MongoStore
-// --------------------------
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
@@ -40,14 +28,10 @@ app.use(session({
   cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 day
 }));
 
-// --------------------------
-// Routes
-// --------------------------
 app.get('/', (req, res) => {
   res.send('🚀 AshAzBoost running!');
 });
 
-// Example dashboard route
 app.get('/dashboard', (req, res) => {
   res.send(`
     <h1>AshAzBoost Dashboard</h1>
@@ -57,9 +41,6 @@ app.get('/dashboard', (req, res) => {
   `);
 });
 
-// --------------------------
-// Start Server
-// --------------------------
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log(`🚀 AshAzBoost running on port ${PORT}`);
