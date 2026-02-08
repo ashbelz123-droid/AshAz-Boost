@@ -1,199 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AshAzBoost - Dashboard</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard | AshAzBoost</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>👤 Welcome, User</h1>
-      <p>Wallet Balance: <b id="walletBalance">UGX 0</b></p>
-    </header>
 
-    <!-- Add Funds -->
-    <div class="card">
-      <h3>➕ Add Funds</h3>
-      <input type="number" id="depositAmount" placeholder="Enter amount (min 2000 UGX)" min="2000">
-      <button class="mtn" onclick="deposit('MTN')">Deposit with MTN Mobile Money</button>
-      <button class="airtel" onclick="deposit('AIRTEL')">Deposit with Airtel Money</button>
-      <div class="note">
-        Minimum deposit is <b>2000 UGX</b>. Wallet is used automatically when you place orders.
-      </div>
-    </div>
+<div class="header">
+  <h2>👤 Dashboard</h2>
+</div>
 
-    <!-- Place Order -->
-    <div class="card">
-      <h3>📦 Place Order</h3>
-      <select id="orderService">
-        <option value="" disabled selected>Select a Service</option>
-      </select>
+<div class="container grid">
 
-      <input type="number" id="orderQuantity" placeholder="Enter Quantity" oninput="updatePrice()">
-      <input type="text" id="orderUrl" placeholder="Enter URL">
-
-      <!-- Dynamic description box -->
-      <div id="serviceDescription" class="description-box">
-        <p>Select a service to see package details.</p>
-      </div>
-
-      <p>Total Price: <b id="totalPrice">UGX 0</b></p>
-      <button onclick="placeOrder()">Place Order</button>
-    </div>
-
-    <!-- Your Orders -->
-    <div class="card">
-      <h3>📝 Your Orders</h3>
-      <ul id="ordersList"></ul>
-    </div>
-
-    <footer>
-      <p>© 2026 AshAzBoost</p>
-    </footer>
+  <!-- Wallet -->
+  <div class="card">
+    <h3>Wallet Balance</h3>
+    <h1 id="wallet">UGX 0</h1>
   </div>
 
-  <script>
-    const user = "defaultUser"; // Replace with your login system
-    let walletBalance = 0;
-    const EXCHANGE_RATE = 3500; // 1 USD = 3500 UGX
-    const MULTIPLIER = 2; // Your markup
+  <!-- Deposit -->
+  <div class="card mtn">
+    <button onclick="deposit(2000,'MTN')">Deposit with MTN</button>
+  </div>
+  <div class="card airtel">
+    <button onclick="deposit(2000,'AIRTEL')">Deposit with Airtel</button>
+  </div>
 
-    const colorMap = {
-      instagram: "description-instagram",
-      twitter: "description-twitter",
-      facebook: "description-facebook",
-      youtube: "description-youtube",
-      telegram: "description-telegram",
-      tiktok: "description-tiktok",
-      linkedin: "description-linkedin"
-    };
+  <!-- Place Order -->
+  <div class="card">
+    <h3>📦 Place Order</h3>
+    <select id="serviceSelect"></select>
+    <div class="description" id="desc"></div>
+    <input id="link" placeholder="Enter URL">
+    <input id="qty" type="number" placeholder="Quantity">
+    <h4>Total: UGX <span id="price">0</span></h4>
+    <button class="primary" onclick="order()">Place Order</button>
+  </div>
 
-    let providerServices = [];
+  <!-- Orders List -->
+  <div class="card">
+    <h3>📝 Your Orders</h3>
+    <ul id="ordersList"></ul>
+  </div>
+</div>
 
-    // Load provider services
-    async function loadServices() {
-      try {
-        const res = await fetch('/api/services'); // Your backend fetches from Socialsphare
-        const data = await res.json();
-        providerServices = data.services;
-
-        const select = document.getElementById('orderService');
-        select.innerHTML = '<option value="" disabled selected>Select a Service</option>';
-
-        providerServices.forEach(service => {
-          const option = document.createElement('option');
-          option.value = service.platform.toLowerCase(); // e.g., instagram, twitter
-          option.dataset.id = service.id; // provider service ID
-          option.dataset.price = service.price_usd; // provider price USD
-          option.dataset.desc = `${service.name} | Limit: ${service.limit} | Quality: ${service.quality} | Refill: ${service.refill} | ${service.start}`;
-          option.textContent = service.name;
-          select.appendChild(option);
-        });
-
-        select.addEventListener('change', () => {
-          const selected = select.selectedOptions[0];
-          const descBox = document.getElementById('serviceDescription');
-
-          // Remove old color classes
-          Object.values(colorMap).forEach(cls => descBox.classList.remove(cls));
-
-          // Add new color class
-          descBox.classList.add(colorMap[selected.value] || "");
-
-          // Update description
-          descBox.innerText = selected.dataset.desc;
-
-          updatePrice();
-        });
-      } catch(err) {
-        console.error('Error loading services:', err);
-      }
-    }
-
-    function getPrice(servicePlatform, quantity) {
-      const option = document.querySelector(`#orderService option[value='${servicePlatform}']`);
-      if (!option || !quantity) return 0;
-      const providerPriceUSD = parseFloat(option.dataset.price);
-      return Math.ceil(providerPriceUSD * EXCHANGE_RATE * MULTIPLIER * quantity);
-    }
-
-    function updatePrice() {
-      const service = document.getElementById("orderService").value;
-      const quantity = document.getElementById("orderQuantity").value;
-      const total = getPrice(service, quantity || 0);
-      document.getElementById("totalPrice").innerText = "UGX " + total.toLocaleString();
-    }
-
-    // Wallet
-    async function loadWallet() {
-      try {
-        const res = await fetch(`/api/wallet?user=${user}`);
-        const data = await res.json();
-        walletBalance = data.wallet;
-        document.getElementById("walletBalance").innerText = "UGX " + walletBalance.toLocaleString();
-        loadOrders();
-      } catch(err){console.log(err);}
-    }
-
-    async function deposit(channel) {
-      const amount = parseInt(document.getElementById("depositAmount").value);
-      if (!amount || amount < 2000) { alert("Minimum deposit is 2000 UGX"); return; }
-      const phone = prompt(`Enter your ${channel} phone number (07XXXXXXXX):`);
-      if (!phone) return;
-      try {
-        const res = await fetch("/api/deposit", {
-          method: "POST",
-          headers: {"Content-Type":"application/json"},
-          body: JSON.stringify({user, amount, channel, phone})
-        });
-        const data = await res.json();
-        walletBalance = data.wallet;
-        document.getElementById("walletBalance").innerText = "UGX " + walletBalance.toLocaleString();
-        if (data.redirect_url) window.location.href = data.redirect_url;
-      } catch(err){alert("Deposit failed");}
-    }
-
-    // Place Order
-    async function placeOrder() {
-      const service = document.getElementById("orderService").value;
-      const quantity = document.getElementById("orderQuantity").value;
-      const url = document.getElementById("orderUrl").value;
-      if (!service || !quantity || !url) return alert("Please fill all fields");
-
-      try {
-        const res = await fetch("/api/order", {
-          method: "POST",
-          headers: {"Content-Type":"application/json"},
-          body: JSON.stringify({user, service, quantity, url})
-        });
-        const data = await res.json();
-        if (data.error) return alert(data.error);
-
-        walletBalance = data.wallet;
-        document.getElementById("walletBalance").innerText = "UGX " + walletBalance.toLocaleString();
-        alert("Order placed!");
-        loadOrders();
-        updatePrice();
-      } catch(err){alert("Order failed");}
-    }
-
-    // Load user orders
-    async function loadOrders() {
-      try {
-        const res = await fetch(`/api/orders?user=${user}`);
-        const data = await res.json();
-        const ordersDiv = document.getElementById("ordersList");
-        ordersDiv.innerHTML = data.orders.map(o => 
-          `<li>${o.service} - ${o.quantity} - UGX ${o.priceUGX.toLocaleString()} - ${o.status}</li>`
-        ).join("");
-      } catch(err){console.log(err);}
-    }
-
-    // Initialize
-    loadServices();
-    loadWallet();
-  </script>
+<script src="script.js"></script>
 </body>
 </html>
