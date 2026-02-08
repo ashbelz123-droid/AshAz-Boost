@@ -1,179 +1,61 @@
-let wallet = 0;
-let services = [];
-let orders = [];
-
-// LOAD USER WALLET
-function loadUser() {
-  fetch("/api/user")
-    .then(res => res.json())
-    .then(u => {
-      wallet = u.wallet;
-      document.getElementById("wallet").innerText = "UGX " + wallet.toLocaleString();
-    });
-}
-
-// LOAD SERVICES FROM SOCIALSPHARE
-function loadServices() {
-  fetch("/api/services")
-    .then(res => res.json())
-    .then(data => {
-      services = data;
-
-      // Populate select
-      const select = document.getElementById("serviceSelect");
-      select.innerHTML = "";
-      services.forEach(s => {
-        const option = document.createElement("option");
-        option.value = s.id;
-        option.innerText = s.name;
-        select.appendChild(option);
-      });
-
-      // Populate table
-      const table = document.getElementById("servicesTable");
-      table.innerHTML = "";
-      services.forEach(s => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${s.category}</td>
-          <td>${s.name}</td>
-          <td>${Math.round(s.rate*3500)}</td>
-          <td>${s.quality || "High"}</td>
-          <td>${s.max || "Unlimited"}</td>
-          <td>${s.refill ? "Yes" : "No"}</td>
-        `;
-        table.appendChild(tr);
-      });
-
-      updatePrice();
-    });
-}
-
-// LOAD ORDERS
-function loadOrders() {
-  fetch("/api/orders")
-    .then(res => res.json())
-    .then(data => {
-      orders = data;
-      const tbody = document.getElementById("ordersList");
-      tbody.innerHTML = "";
-      orders.forEach(o => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${o._id}</td>
-          <td>${o.service}</td>
-          <td>${o.quantity}</td>
-          <td>UGX ${o.price.toLocaleString()}</td>
-          <td>${o.status}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-    });
-}
-
-// UPDATE PRICE ON CHANGE
-const select = document.getElementById("serviceSelect");
-const qtyInput = document.getElementById("qty");
-select.addEventListener("change", updatePrice);
-qtyInput.addEventListener("input", updatePrice);
-
-function updatePrice() {
-  const serviceId = parseInt(select.value);
-  const qty = parseInt(qtyInput.value) || 0;
-  const service = services.find(s => s.id === serviceId);
-  if (!service) return;
-  document.getElementById("desc").innerText = service.desc || "High quality service, instant start, no refill";
-  document.getElementById("price").innerText = Math.round((service.rate || 0) * qty * 3500);
-}
-
-// DEPOSIT
-function depositMTN() {
-  const amt = parseInt(document.getElementById("depositAmount").value);
-  if(amt < 2000) return alert("Minimum deposit is 2000 UGX");
-  fetch("/api/deposit", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({amount: amt}) })
-  .then(()=> loadUser());
-}
-
-function depositAirtel() {
-  const amt = parseInt(document.getElementById("depositAmount").value);
-  if(amt < 2000) return alert("Minimum deposit is 2000 UGX");
-  fetch("/api/deposit", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({amount: amt}) })
-  .then(()=> loadUser());
-}
-
-// PLACE ORDER
-function placeOrder() {
-  const serviceId = parseInt(select.value);
-  const qty = parseInt(qtyInput.value);
-  const service = services.find(s => s.id === serviceId);
-  const price = Math.round((service.rate || 0) * qty * 3500);
-  const link = document.getElementById("link").value;
-
-  if(wallet < price) return alert("Insufficient balance");
-
-  fetch("/api/order", {
-    method: "POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify({service: serviceId, quantity: qty, price, link})
-  }).then(res=>res.json())
-    .then(res=>{
-      if(res.error) alert(res.error);
-      loadUser();
-      loadOrders();
-    });
-}
-
-// --- ANALYTICS CHART ---
-const ctx = document.getElementById("analyticsChart").getContext("2d");
-let analyticsChart = new Chart(ctx, {
-  type: "line",
-  data: {
-    labels: [],
-    datasets: [
-      {
-        label: "Wallet Balance (UGX)",
-        data: [],
-        borderColor: "#ffcc00",
-        backgroundColor: "rgba(255,204,0,0.2)",
-        tension: 0.4,
-        fill: true
-      },
-      {
-        label: "Orders Placed",
-        data: [],
-        borderColor: "#2563eb",
-        backgroundColor: "rgba(37,99,235,0.2)",
-        tension: 0.4,
-        fill: true
-      }
-    ]
-  },
-  options: {
-    responsive: true,
-    plugins: { legend: { labels: { color: "#e5e7eb" } } },
-    scales: {
-      x: { ticks: { color: "#e5e7eb" }, grid: { color: "#1e293b" } },
-      y: { ticks: { color: "#e5e7eb" }, grid: { color: "#1e293b" } }
+const services = {
+  instagram: [
+    {
+      name: "Instagram Followers - Cheapest Market",
+      price: 20,
+      desc: "⚠️ High quality | No refill | Instant start | Mixed accounts"
     }
-  }
-});
+  ],
+  telegram: [
+    {
+      name: "Telegram Members [Max 10M]",
+      price: 15,
+      desc: "⚠️ High quality | Cancel enabled | No refill"
+    }
+  ],
+  tiktok: [
+    {
+      name: "TikTok Likes",
+      price: 18,
+      desc: "✅ Real users | Fast delivery"
+    }
+  ],
+  youtube: [
+    {
+      name: "YouTube Views",
+      price: 10,
+      desc: "✅ Safe | Non-drop"
+    }
+  ]
+};
 
-function updateChart(walletHistory, ordersHistory) {
-  analyticsChart.data.labels = walletHistory.map(w => w.date);
-  analyticsChart.data.datasets[0].data = walletHistory.map(w => w.balance);
-  analyticsChart.data.datasets[1].data = ordersHistory.map(o => o.count);
-  analyticsChart.update();
+let selectedService = null;
+
+function loadServices() {
+  const category = document.getElementById("category").value;
+  const serviceSelect = document.getElementById("service");
+  serviceSelect.innerHTML = `<option value="">Select Service</option>`;
+
+  if (!services[category]) return;
+
+  services[category].forEach((s, i) => {
+    serviceSelect.innerHTML += `<option value="${i}">${s.name}</option>`;
+  });
 }
 
-function loadAnalytics() {
-  fetch("/api/analytics")
-    .then(res => res.json())
-    .then(data => updateChart(data.wallet, data.orders));
+function updateService() {
+  const cat = document.getElementById("category").value;
+  const index = document.getElementById("service").value;
+
+  if (index === "") return;
+
+  selectedService = services[cat][index];
+  document.getElementById("serviceDesc").innerText = selectedService.desc;
+  calcPrice();
 }
 
-// INITIAL LOAD
-loadUser();
-loadServices();
-loadOrders();
-loadAnalytics();
-setInterval(loadAnalytics, 15000);
+function calcPrice() {
+  if (!selectedService) return;
+  const qty = document.getElementById("quantity").value;
+  document.getElementById("price").value = qty * selectedService.price;
+}
