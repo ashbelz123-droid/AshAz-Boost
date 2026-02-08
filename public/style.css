@@ -136,8 +136,31 @@ input:focus, select:focus {
 .x  { background: #000; color:#fff; }
 .tg { background: #229ed9; color:#fff; }
 
+/* ORDERS TABLE */
+.orders-card table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.orders-card th, .orders-card td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+  font-size: 14px;
+}
+
+.orders-card th {
+  background: rgba(255,255,255,0.1);
+  font-weight: 600;
+}
+
+.orders-card tbody tr:hover {
+  background: rgba(255,255,255,0.05);
+}
+
 /* RESPONSIVE */
 @media (max-width: 768px) {
   .main { padding: 15px; }
   .card { padding: 22px; }
-}
+  }
