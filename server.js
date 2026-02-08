@@ -1,101 +1,118 @@
-require("dotenv").config();
-const express = require("express");
-const mongoose = require("mongoose");
-const axios = require("axios");
-const cors = require("cors");
-
-const User = require("./models/User");
-const Order = require("./models/Order");
-
-const app = express();
-app.use(cors());
-app.use(express.json());
-app.use(express.static("public"));
-
-mongoose.connect(process.env.MONGO_URI);
-
-// demo user
-app.get("/api/user", async (req, res) => {
-  let user = await User.findOne();
-  if (!user) {
-    user = await User.create({ wallet: 0 });
-  }
-  res.json(user);
-});
-
-// add funds (sandbox)
-app.post("/api/deposit", async (req, res) => {
-  const { amount } = req.body;
-  const user = await User.findOne();
-  user.wallet += amount;
-  await user.save();
-  res.json(user);
-});
-
-// place order
-app.post("/api/order", async (req, res) => {
-  const { service, link, quantity, price } = req.body;
-  const user = await User.findOne();
-
-  if (user.wallet < price) {
-    return res.status(400).json({ error: "Insufficient balance" });
-  }
-
-  user.wallet -= price;
-  await user.save();
-
-  const apiRes = await axios.post("https://www.socialsphare.com/api/v2", {
-    key: process.env.SOCIALSPHARE_API_KEY,
-    action: "add",
-    service,
-    link,
-    quantity
-  });
-
-  const order = await Order.create({
-    service,
-    link,
-    quantity,
-    price,
-    providerOrderId: apiRes.data.order
-  });
-
-  res.json(order);
-});
-
-// auto status + refund
-setInterval(async () => {
-  const orders = await Order.find({ refunded: false });
-
-  for (const order of orders) {
-    const res = await axios.post("https://www.socialsphare.com/api/v2", {
-      key: process.env.SOCIALSPHARE_API_KEY,
-      action: "status",
-      order: order.providerOrderId
-    });
-
-    order.status = res.data.status;
-
-    if (["Canceled", "Failed"].includes(order.status)) {
-      const user = await User.findOne();
-      user.wallet += order.price;
-      order.refunded = true;
-      await user.save();
+const services = {
+  Instagram: [
+    {
+      id: 1,
+      name: "Instagram Followers - Cheapest Market",
+      rate: 0.00028,
+      min: 100,
+      max: 1000000,
+      desc: "⚡ Instant start | 🔒 No password | 👤 Mixed quality | ❌ No refill"
+    },
+    {
+      id: 2,
+      name: "Instagram Likes - Real & Fast",
+      rate: 0.00018,
+      min: 50,
+      max: 500000,
+      desc: "❤️ Fast delivery | 🤖 Mixed accounts | ❌ No refill"
+    },
+    {
+      id: 3,
+      name: "Instagram Views - HQ",
+      rate: 0.00005,
+      min: 1000,
+      max: 5000000,
+      desc: "👁️ High retention | ⚡ Super fast | ✅ Safe"
     }
+  ],
 
-    if (order.status === "Partial") {
-      const refund =
-        (res.data.remains / order.quantity) * order.price;
-      const user = await User.findOne();
-      user.wallet += refund;
-      order.refunded = true;
-      await user.save();
+  Telegram: [
+    {
+      id: 4,
+      name: "Telegram Members [ Max 10M ]",
+      rate: 0.00012,
+      min: 1000,
+      max: 10000000,
+      desc: "🚀 Instant start | ❌ No refill | ⚠️ Cancel enabled"
+    },
+    {
+      id: 5,
+      name: "Telegram Post Views",
+      rate: 0.00003,
+      min: 100,
+      max: 10000000,
+      desc: "👁️ Realistic views | ⚡ Fast"
     }
+  ],
 
-    await order.save();
-  }
-}, 300000);
+  YouTube: [
+    {
+      id: 6,
+      name: "YouTube Subscribers",
+      rate: 0.0009,
+      min: 100,
+      max: 500000,
+      desc: "📺 Stable growth | ⚠️ Drop possible | ❌ No refill"
+    },
+    {
+      id: 7,
+      name: "YouTube Views",
+      rate: 0.00004,
+      min: 1000,
+      max: 10000000,
+      desc: "👁️ High retention | 🔥 Trending boost"
+    }
+  ],
 
-app.listen(process.env.PORT, () =>
-  console.log("Server running")
-);
+  TikTok: [
+    {
+      id: 8,
+      name: "TikTok Followers",
+      rate: 0.00035,
+      min: 100,
+      max: 1000000,
+      desc: "🎵 Fast start | 🤖 Mixed users"
+    },
+    {
+      id: 9,
+      name: "TikTok Likes",
+      rate: 0.0002,
+      min: 50,
+      max: 500000,
+      desc: "❤️ Realistic likes | ⚡ Fast"
+    }
+  ],
+
+  Facebook: [
+    {
+      id: 10,
+      name: "Facebook Page Likes",
+      rate: 0.0004,
+      min: 100,
+      max: 1000000,
+      desc: "👍 Page growth | ⚠️ No refill"
+    }
+  ],
+
+  Twitter: [
+    {
+      id: 11,
+      name: "Twitter (X) Followers",
+      rate: 0.0005,
+      min: 100,
+      max: 500000,
+      desc: "🐦 Fast delivery | 👤 Mixed quality"
+    }
+  ],
+
+  LinkedIn: [
+    {
+      id: 12,
+      name: "LinkedIn Followers",
+      rate: 0.0012,
+      min: 50,
+      max: 100000,
+      desc: "💼 Professional profiles | ⚠️ Slow start"
+    }
+  ]
+};
