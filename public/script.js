@@ -123,7 +123,57 @@ function placeOrder() {
     });
 }
 
+// --- ANALYTICS CHART ---
+const ctx = document.getElementById("analyticsChart").getContext("2d");
+let analyticsChart = new Chart(ctx, {
+  type: "line",
+  data: {
+    labels: [],
+    datasets: [
+      {
+        label: "Wallet Balance (UGX)",
+        data: [],
+        borderColor: "#ffcc00",
+        backgroundColor: "rgba(255,204,0,0.2)",
+        tension: 0.4,
+        fill: true
+      },
+      {
+        label: "Orders Placed",
+        data: [],
+        borderColor: "#2563eb",
+        backgroundColor: "rgba(37,99,235,0.2)",
+        tension: 0.4,
+        fill: true
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { labels: { color: "#e5e7eb" } } },
+    scales: {
+      x: { ticks: { color: "#e5e7eb" }, grid: { color: "#1e293b" } },
+      y: { ticks: { color: "#e5e7eb" }, grid: { color: "#1e293b" } }
+    }
+  }
+});
+
+function updateChart(walletHistory, ordersHistory) {
+  analyticsChart.data.labels = walletHistory.map(w => w.date);
+  analyticsChart.data.datasets[0].data = walletHistory.map(w => w.balance);
+  analyticsChart.data.datasets[1].data = ordersHistory.map(o => o.count);
+  analyticsChart.update();
+}
+
+function loadAnalytics() {
+  fetch("/api/analytics")
+    .then(res => res.json())
+    .then(data => updateChart(data.wallet, data.orders));
+}
+
 // INITIAL LOAD
 loadUser();
 loadServices();
 loadOrders();
+loadAnalytics();
+setInterval(loadAnalytics, 15000);
