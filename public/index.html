@@ -1,42 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AshAzBoost</title>
-
-<link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <title>AshMediaBoost</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<header>
-  <nav>
-    <a href="/">Home</a>
-    <a href="/login">Login</a>
-  </nav>
-</header>
+<h2>👤 Welcome</h2>
+<div class="card">
+  <h3>Wallet Balance</h3>
+  <h1 id="wallet">UGX 0</h1>
+</div>
 
-<main>
-  <h1>Boosting Services</h1>
-  <p>Get more followers, likes, and engagement on your social platforms!</p>
+<div class="card mtn">
+  <button onclick="deposit(2000)">MTN Deposit</button>
+</div>
 
-  <div class="services">
-    <div class="service-card instagram"><i class="fab fa-instagram"></i> Instagram</div>
-    <div class="service-card twitter"><i class="fab fa-x-twitter"></i> Twitter</div>
-    <div class="service-card facebook"><i class="fab fa-facebook-f"></i> Facebook</div>
-    <div class="service-card youtube"><i class="fab fa-youtube"></i> YouTube</div>
-    <div class="service-card telegram"><i class="fab fa-telegram-plane"></i> Telegram</div>
-    <div class="service-card tiktok"><i class="fab fa-tiktok"></i> TikTok</div>
-    <div class="service-card linkedin"><i class="fab fa-linkedin-in"></i> LinkedIn</div>
-  </div>
-</main>
+<div class="card airtel">
+  <button onclick="deposit(2000)">Airtel Deposit</button>
+</div>
 
-<footer>
-  <p>© 2026 AshAzBoost</p>
-</footer>
+<div class="card">
+  <h3>📦 Place Order</h3>
 
+  <select id="service">
+    <option value="1">Instagram Followers – Cheapest Market</option>
+    <option value="2">Telegram Members – HQ – No Refill</option>
+  </select>
+
+  <div id="desc"></div>
+
+  <input id="link" placeholder="Enter URL">
+  <input id="qty" type="number" placeholder="Quantity">
+
+  <h4>Total: UGX <span id="price">0</span></h4>
+
+  <button onclick="order()">Place Order</button>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
