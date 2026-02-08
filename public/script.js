@@ -1,90 +1,73 @@
-let servicesData = {};
-let userEmail = null;
+let email = "user@test.com";
+let services = [];
 
-// GOOGLE LOGIN
-function handleCredentialResponse(response) {
-  // Decode JWT to get email & name
-  const payload = JSON.parse(atob(response.credential.split('.')[1]));
-  const email = payload.email;
-  const name = payload.name;
-
+function login() {
   fetch("/api/login", {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({ email, name })
-  }).then(r=>r.json()).then(d=>{
-    if(d.success) { userEmail = email; window.location.href="/dashboard"; }
-  });
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email })
+  }).then(() => location.href = "/dashboard");
 }
 
-// Logout
-function logout(){
-  fetch("/api/logout",{method:"POST"}).then(()=>window.location.href="/");
-}
-
-// Load dashboard data
-async function load(){
-  const res = await fetch("/api/data");
-  const data = await res.json();
-  document.getElementById("wallet").innerText = "UGX "+data.wallet;
-  document.getElementById("orders").innerHTML =
-    data.orders.map(o=>`<li>${o.service} - ${o.quantity} (${o.status})</li>`).join("");
-}
-
-// Load services
-async function loadServices(){
+async function loadServices() {
   const res = await fetch("/api/services");
-  const data = await res.json();
-  servicesData = data;
+  services = await res.json();
+
   const sel = document.getElementById("service");
-  sel.innerHTML = '<option value="">Select Service</option>';
-  for(const id in data){
-    const s = data[id];
-    sel.innerHTML += `<option value="${s.name}">${s.name} [${s.min}-${s.max}]</option>`;
-  }
-}
-
-// Update description
-function updateDesc(){
-  const s = document.getElementById("service").value;
-  if(!s){ desc.innerText = ""; return; }
-  const srv = Object.values(servicesData).find(x=>x.name===s);
-  desc.innerText = srv.description || "High quality • Fast • Reliable SMM service";
-}
-
-// Deposit
-async function deposit(){
-  const amount = Number(document.getElementById("amount").value);
-  const res = await fetch("/api/deposit", {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({ amount })
+  services.forEach(s => {
+    const opt = document.createElement("option");
+    opt.value = s.id;
+    opt.text = s.name;
+    opt.dataset.price = s.rateUGX;
+    opt.dataset.desc = s.desc;
+    sel.appendChild(opt);
   });
-  const data = await res.json();
-  if(data.error) alert(data.error);
-  load();
+
+  sel.onchange = updatePrice;
+  updatePrice();
 }
 
-// Place order
-async function order(){
-  const svc = document.getElementById("service").value;
-  const qty = Number(document.getElementById("quantity").value);
-  const urlValue = document.getElementById("url").value;
-  if(!svc || !qty || !urlValue){ alert("Fill all fields"); return; }
+function updatePrice() {
+  const sel = document.getElementById("service");
+  const opt = sel.selectedOptions[0];
+  document.getElementById("desc").innerText = opt.dataset.desc;
+  document.getElementById("price").innerText = opt.dataset.price;
+}
 
-  const priceUGX = Math.ceil((Object.values(servicesData).find(s=>s.name===svc)?.price || 0)*3500*1.5);
-  document.getElementById("price").innerText = priceUGX;
-
-  const res = await fetch("/api/order", {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({ service:svc, quantity:qty, url:urlValue })
+async function order() {
+  const price = parseInt(document.getElementById("price").innerText);
+  await fetch("/api/order", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      email,
+      service: service.value,
+      link: link.value,
+      quantity: qty.value,
+      price
+    })
   });
-  const data = await res.json();
-  if(data.error) alert(data.error);
-  load();
+  alert("Order sent");
 }
 
-// Initialize
-load();
-loadServices();
+async function deposit() {
+  const amt = parseInt(document.getElementById("deposit").value);
+  await fetch("/api/deposit", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, amount: amt })
+  });
+  loadWallet();
+}
+
+async function loadWallet() {
+  const r = await fetch(`/api/wallet/${email}`);
+  const d = await r.json();
+  document.getElementById("wallet").innerText =
+    "UGX " + d.wallet.toLocaleString();
+}
+
+if (location.pathname.includes("dashboard")) {
+  loadServices();
+  loadWallet();
+    }
