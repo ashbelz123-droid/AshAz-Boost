@@ -3,10 +3,7 @@ let walletBalance = 0;
 let services = [];
 let orders = [];
 
-// --------------------
-// Update Wallet
-// --------------------
-async function updateWallet() {
+async function updateWallet(){
   const res = await fetch(`/api/wallet/${currentEmail}`);
   const data = await res.json();
   walletBalance = data.wallet;
@@ -14,35 +11,24 @@ async function updateWallet() {
 }
 updateWallet();
 
-// --------------------
-// Deposit Function
-// --------------------
 async function deposit(channel){
   const amount = parseInt(document.getElementById("depositAmount").value);
-  if(!amount || amount < 500){ alert("Minimum deposit is 500 UGX"); return; }
-
-  await fetch("/api/deposit", {
+  if(!amount || amount<500){ alert("Minimum deposit is 500 UGX"); return; }
+  await fetch("/api/deposit",{
     method:"POST",
     headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({ email: currentEmail, amount })
+    body:JSON.stringify({ email:currentEmail, amount })
   });
-
   updateWallet();
   alert("Deposit successful!");
 }
 
-// --------------------
-// Fetch Services
-// --------------------
 async function loadServices(){
   const res = await fetch("/api/services");
   services = await res.json();
   renderServices();
 }
 
-// --------------------
-// Render Services Table
-// --------------------
 function renderServices(){
   const tbody = document.querySelector("#servicesTable tbody");
   tbody.innerHTML = "";
@@ -63,30 +49,21 @@ function renderServices(){
 }
 loadServices();
 
-// --------------------
-// Place Order
-// --------------------
 async function placeOrder(serviceId, priceUGX){
   const qty = parseInt(document.getElementById(`qty_${serviceId}`).value);
   const service = services.find(s => s.id === serviceId);
-  if(!service){ alert("Service not found"); return; }
-
-  const totalPrice = priceUGX * qty / service.min; // Adjust price scaling
-  if(totalPrice > walletBalance){ alert("Insufficient balance"); return; }
-
-  const res = await fetch("/api/order", {
+  const totalPrice = priceUGX * qty / service.min;
+  if(totalPrice>walletBalance){ alert("Insufficient balance"); return; }
+  const res = await fetch("/api/order",{
     method:"POST",
     headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({ email:currentEmail, service:serviceId, link:"", quantity:qty, price:totalPrice })
+    body:JSON.stringify({ email:currentEmail, service:serviceId, link:"", quantity:qty, price:totalPrice })
   });
   const data = await res.json();
   if(data.success){ alert("Order placed!"); updateWallet(); loadOrders(); }
   else{ alert(data.error); }
 }
 
-// --------------------
-// Load Orders
-// --------------------
 async function loadOrders(){
   const res = await fetch(`/api/orders/${currentEmail}`);
   orders = await res.json();
@@ -107,12 +84,9 @@ async function loadOrders(){
 }
 loadOrders();
 
-// --------------------
-// Search / Filter
-// --------------------
 function filterServices(){
   const search = document.getElementById("searchInput").value.toLowerCase();
-  const filtered = services.filter(s => s.name.toLowerCase().includes(search) || s.platform.toLowerCase().includes(search));
+  const filtered = services.filter(s=>s.name.toLowerCase().includes(search)||s.platform.toLowerCase().includes(search));
   const tbody = document.querySelector("#servicesTable tbody");
   tbody.innerHTML = "";
   filtered.forEach(s=>{
@@ -131,9 +105,6 @@ function filterServices(){
   });
 }
 
-// --------------------
-// Platform Icons
-// --------------------
 function getPlatformIcon(name){
   switch(name.toLowerCase()){
     case "instagram": return '<i class="fab fa-instagram"></i>';
@@ -145,4 +116,4 @@ function getPlatformIcon(name){
     case "linkedin": return '<i class="fab fa-linkedin"></i>';
     default: return '<i class="fas fa-globe"></i>';
   }
-}
+      }
