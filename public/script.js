@@ -66,6 +66,7 @@ async function placeOrder() {
   if (data.error) return alert(data.error);
   alert("Order placed successfully");
   loadWallet();
+  loadOrders();
 }
 
 // DEPOSIT
@@ -83,6 +84,32 @@ async function deposit() {
   loadWallet();
 }
 
-// INIT
+// LOAD & DISPLAY ORDERS
+async function loadOrders() {
+  const res = await fetch(`/api/orders/${email}`);
+  const data = await res.json();
+
+  const tbody = document.querySelector("#ordersTable tbody");
+  tbody.innerHTML = "";
+
+  data.forEach(o => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${o.id}</td>
+      <td>${o.service}</td>
+      <td>${o.link}</td>
+      <td>${o.quantity}</td>
+      <td>${o.price}</td>
+      <td>${o.status}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// AUTO-REFRESH ORDERS EVERY 15s
+setInterval(loadOrders, 15000);
+
+// INITIAL LOAD
 loadWallet();
 loadServices();
+loadOrders();
