@@ -15,48 +15,29 @@ body {
   text-align: center;
   color: #fff;
 }
-.header nav a {
-  margin: 0 10px;
-  color: #fff;
-  text-decoration: none;
-  font-weight: bold;
-}
-.header nav a:hover { text-decoration: underline; }
-
-/* HERO */
-.hero {
-  text-align: center;
-  margin: 20px 0;
-}
-.hero h2 { font-size: 2rem; }
-.hero p { font-size: 1.1rem; color: #cbd5f5; }
 
 /* GRID CONTAINER */
-.container, .services-grid {
+.container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
+  grid-template-columns: repeat(auto-fit, minmax(320px,1fr));
   gap: 16px;
-  max-width: 1200px;
-  margin: auto;
+  max-width: 1400px;
+  margin: 20px auto;
 }
 
 /* CARDS */
-.card, .service-card {
+.card {
   background: #020617;
   border-radius: 14px;
   padding: 16px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-  text-align: center;
 }
 
-/* SERVICE CARDS */
-.service-card { font-weight: bold; font-size: 1.2rem; }
-
-/* INPUTS & BUTTONS */
+/* WALLET & ORDER INPUTS */
 input, select {
   width: 100%;
-  padding: 12px;
-  margin-bottom: 10px;
+  padding: 10px;
+  margin-bottom: 8px;
   border-radius: 10px;
   border: none;
   background: #020617;
@@ -70,7 +51,7 @@ button {
   border: none;
   font-weight: bold;
   cursor: pointer;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 button.mtn { background: #ffcc00; color: #000; }
 button.airtel { background: #e60000; color: #fff; }
@@ -81,21 +62,34 @@ button.primary { background: #2563eb; color: #fff; }
   background: #020617;
   padding: 10px;
   border-radius: 10px;
-  font-size: 0.85rem;
-  margin-top: 6px;
+  font-size: 0.9rem;
+  margin: 6px 0;
   color: #cbd5f5;
 }
 
-/* FOOTER */
-footer {
+/* TABLES */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+th, td {
+  border: 1px solid #1e293b;
+  padding: 8px;
   text-align: center;
-  margin-top: 20px;
+}
+th {
+  background: #2563eb;
+  color: #fff;
+}
+td {
+  background: #020617;
   color: #cbd5f5;
+  font-size: 0.9rem;
 }
 
 /* MOBILE RESPONSIVE */
-@media (max-width: 600px) {
-  body { padding: 8px; }
-  .header h2 { font-size: 1.1rem; }
-  .hero h2 { font-size: 1.5rem; }
-    }
+@media (max-width: 768px) {
+  .container { grid-template-columns: 1fr; }
+  .header h2 { font-size: 1.3rem; }
+  }
