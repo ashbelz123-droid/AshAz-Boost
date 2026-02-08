@@ -3,41 +3,35 @@
 <head>
   <title>Dashboard</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
+
 <header>
-  <h2>👤 Dashboard</h2>
-  <button onclick="logout()" class="btn-logout">Logout</button>
+  <h2>User Dashboard</h2>
 </header>
 
 <div class="container">
 
   <div class="card">
-    <h3>💰 Wallet Balance</h3>
+    <h3>Wallet</h3>
     <p id="wallet">UGX 0</p>
-    <input type="number" id="amount" placeholder="Min 500 UGX">
-    <button class="mtn" onclick="deposit()">MTN Deposit</button>
-    <button class="airtel" onclick="deposit()">Airtel Deposit</button>
+    <input id="deposit" type="number" placeholder="Min 500 UGX">
+    <button class="mtn" onclick="deposit()">MTN</button>
+    <button class="airtel" onclick="deposit()">Airtel</button>
   </div>
 
   <div class="card">
-    <h3>📦 Place Order</h3>
-    <select id="service" onchange="updateDesc()"></select>
-    <div id="desc" class="desc">Select service to see description</div>
-    <input type="text" id="url" placeholder="Enter URL">
-    <input type="number" id="quantity" placeholder="Quantity">
+    <h3>Place Order</h3>
+    <select id="service"></select>
+    <div id="desc" class="desc"></div>
+    <input id="link" placeholder="Order URL">
+    <input id="qty" type="number" placeholder="Quantity">
     <p>Price: <span id="price">0</span> UGX</p>
     <button onclick="order()">Place Order</button>
-  </div>
-
-  <div class="card">
-    <h3>📝 Orders</h3>
-    <ul id="orders"></ul>
   </div>
 
 </div>
 
 <script src="script.js"></script>
 </body>
-  </html>
+</html>
