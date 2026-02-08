@@ -1,52 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
   <title>Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="container">
+<h2>👤 Welcome</h2>
 
-  <h2>New Order</h2>
+<div class="card">
+  <h3>💰 Wallet Balance</h3>
+  <p id="balance">UGX 0</p>
+</div>
 
-  <div class="card">
+<div class="card">
+  <h3>➕ Add Funds</h3>
+  <input type="number" id="amount" placeholder="Min 500 UGX">
+  <button class="mtn" onclick="deposit()">MTN Mobile Money</button>
+  <button class="airtel" onclick="deposit()">Airtel Money</button>
+  <p>Minimum deposit: <b>500 UGX</b></p>
+</div>
 
-    <label>Category</label>
-    <select id="category" onchange="loadServices()">
-      <option value="">Select Category</option>
-      <option value="instagram">Instagram</option>
-      <option value="telegram">Telegram</option>
-      <option value="tiktok">TikTok</option>
-      <option value="youtube">YouTube</option>
-    </select>
+<div class="card">
+  <h3>📦 Place Order</h3>
 
-    <label>Service</label>
-    <select id="service" onchange="selectService()">
-      <option value="">Select Service</option>
-    </select>
+  <select id="service">
+    <option>Instagram Followers</option>
+    <option>Instagram Likes</option>
+    <option>Telegram Members</option>
+    <option>TikTok Views</option>
+    <option>YouTube Subscribers</option>
+  </select>
 
-    <div id="description" class="desc-box">
-      Service description will appear here
-    </div>
+  <input type="text" id="url" placeholder="Enter link">
+  <input type="number" id="qty" placeholder="Quantity">
 
-    <label>Your Link</label>
-    <input type="text" id="link" placeholder="https://example.com">
-
-    <label>Quantity</label>
-    <input type="number" id="quantity" placeholder="Enter quantity" oninput="calculatePrice()">
-
-    <label>Price (UGX)</label>
-    <input type="text" id="price" disabled>
-
-    <button onclick="placeOrder()">Place Order</button>
-
-  </div>
-
+  <button onclick="order()">Place Order</button>
 </div>
 
 <script src="script.js"></script>
 </body>
-      </html>
+</html>
