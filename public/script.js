@@ -1,7 +1,6 @@
 let wallet = 0;
 let services = [];
 
-// LOAD USER & WALLET
 function loadUser() {
   fetch("/api/user")
     .then(res => res.json())
@@ -11,7 +10,6 @@ function loadUser() {
     });
 }
 
-// LOAD LIVE SERVICES
 function loadServices() {
   fetch("/api/services")
     .then(res => res.json())
@@ -32,7 +30,6 @@ function loadServices() {
 loadUser();
 loadServices();
 
-// UPDATE PRICE & DESC
 const select = document.getElementById("serviceSelect");
 const qtyInput = document.getElementById("qty");
 select.addEventListener("change", updatePrice);
@@ -47,7 +44,6 @@ function updatePrice() {
   document.getElementById("price").innerText = Math.round((service.rate || 0) * qty * 3500);
 }
 
-// DEPOSIT
 function deposit(amount, channel) {
   fetch("/api/deposit", {
     method: "POST",
@@ -56,7 +52,6 @@ function deposit(amount, channel) {
   }).then(() => loadUser());
 }
 
-// PLACE ORDER
 function order() {
   const serviceId = parseInt(select.value);
   const qty = parseInt(qtyInput.value);
@@ -73,4 +68,4 @@ function order() {
       if (res.error) alert(res.error);
       loadUser();
     });
-    }
+}
