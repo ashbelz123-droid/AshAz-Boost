@@ -10,7 +10,7 @@
 
 <header class="header">
   <div class="logo">AshMediaBoost</div>
-  <div class="user">Premium User</div>
+  <div class="user">Dashboard</div>
 </header>
 
 <div class="main">
@@ -30,7 +30,7 @@
   <div class="card wallet-card">
     <h3>Wallet Balance</h3>
     <div id="wallet" class="wallet-amount">UGX 0</div>
-    <input id="deposit" type="number" placeholder="Enter amount (UGX)">
+    <input id="deposit" type="number" placeholder="Enter amount (min 500 UGX)">
     <button class="btn mtn" onclick="deposit()">Deposit MTN / Airtel</button>
   </div>
 
@@ -47,18 +47,11 @@
   <!-- ORDER CARD -->
   <div class="card order-card">
     <h3>Create Order</h3>
-
     <select id="service" onchange="updatePrice()"></select>
-
     <div id="desc" class="service-desc">Select a service</div>
-
     <input id="link" placeholder="Post / Profile Link">
     <input id="qty" type="number" placeholder="Quantity">
-
-    <div class="price-box">
-      Total Price: <span id="price">0</span> UGX
-    </div>
-
+    <div class="price-box">Total Price: <span id="price">0</span> UGX</div>
     <button class="btn order-btn" onclick="placeOrder()">Place Order</button>
   </div>
 
@@ -85,4 +78,4 @@
 
 <script src="script.js"></script>
 </body>
-</html>
+  </html>
