@@ -1,15 +1,14 @@
-const email = "user@ashmediaboost.com";
-let allServices = [];
-let filteredPlatform = "All";
+let email = localStorage.getItem("userEmail");
+if(!email) window.location.href="/login";
 
-// Load wallet
+let allServices=[], filteredPlatform="All";
+
 async function loadWallet(){
   const res=await fetch(`/api/wallet/${email}`);
   const data=await res.json();
   document.getElementById("wallet").innerText = "UGX "+(data.wallet || 0).toLocaleString();
 }
 
-// Load services from API
 async function loadServices(){
   const res=await fetch("/api/services");
   allServices = await res.json();
@@ -33,7 +32,6 @@ function populateServices(list){
   });
 }
 
-// Platform filter
 function filterByPlatform(platform){
   filteredPlatform=platform;
   document.querySelectorAll(".platform-btn").forEach(btn=>btn.classList.remove("active"));
@@ -41,7 +39,6 @@ function filterByPlatform(platform){
   populateServices(allServices);
 }
 
-// Update price & description
 function updatePrice(){
   const sel=document.getElementById("service");
   const opt=sel.options[sel.selectedIndex];
@@ -50,14 +47,12 @@ function updatePrice(){
   document.getElementById("desc").innerText=opt.dataset.desc;
 }
 
-// Filter search
 function filterServices(){
   const q=document.getElementById("serviceSearch").value.toLowerCase();
   const filtered = allServices.filter(s=>(s.name+s.category).toLowerCase().includes(q));
   populateServices(filtered);
 }
 
-// Place order with min/max validation
 async function placeOrder(){
   const service=document.getElementById("service").value;
   const link=document.getElementById("link").value;
@@ -70,11 +65,7 @@ async function placeOrder(){
   const min=parseInt(opt.dataset.min), max=parseInt(opt.dataset.max);
   if(qty<min || qty>max) return alert(`Quantity must be between ${min} and ${max}`);
 
-  const res=await fetch("/api/order",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({email,service,link,quantity:qty,price})
-  });
+  const res=await fetch("/api/order",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email,service,link,quantity:qty,price})});
   const data=await res.json();
   if(data.error) return alert(data.error);
   alert("Order placed successfully");
@@ -82,23 +73,19 @@ async function placeOrder(){
   loadOrders();
 }
 
-// Deposit
 async function deposit(){
   const amount=parseInt(document.getElementById("deposit").value);
   if(!amount || amount<500) return alert("Minimum deposit: 500 UGX");
   const res=await fetch("/api/deposit",{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({email,amount}) });
-  const data=await res.json();
-  alert("Deposit successful");
+  await res.json();
   loadWallet();
 }
 
-// Load orders
 async function loadOrders(){
   const res=await fetch(`/api/orders/${email}`);
   const data=await res.json();
   const tbody=document.querySelector("#ordersTable tbody");
   tbody.innerHTML="";
-
   data.forEach(o=>{
     const tr=document.createElement("tr");
     const platformIcon={
@@ -115,10 +102,9 @@ async function loadOrders(){
       "Canceled":"status-canceled",
       "Partial":"status-partial"
     }[o.status]||"";
-
     tr.innerHTML=`
       <td>${o.id}</td>
-      <td class="platform-badge">${platformIcon} ${o.platform}</td>
+      <td>${platformIcon} ${o.platform}</td>
       <td>${o.service}</td>
       <td>${o.link}</td>
       <td>${o.quantity}</td>
