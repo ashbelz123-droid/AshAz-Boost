@@ -1,5 +1,6 @@
 const email = "user@ashmediaboost.com";
 let allServices = [];
+let filteredPlatform = "All";
 
 // Load wallet
 async function loadWallet(){
@@ -12,17 +13,32 @@ async function loadWallet(){
 async function loadServices(){
   const res=await fetch("/api/services");
   allServices = await res.json();
-  const s = document.getElementById("service");
-  s.innerHTML = "<option value=''>Select Service</option>";
-  allServices.forEach(x=>{
-    const o = document.createElement("option");
+  populateServices(allServices);
+}
+
+function populateServices(list){
+  const s=document.getElementById("service");
+  s.innerHTML="<option value=''>Select Service</option>";
+  list.forEach(x=>{
+    if(filteredPlatform!=="All" && x.platform!==filteredPlatform) return;
+    const o=document.createElement("option");
     o.value=x.id;
     o.textContent=`${x.name} (${x.category})`;
     o.dataset.price=x.priceUGX;
     o.dataset.desc=x.desc;
     o.dataset.platform=x.platform;
+    o.dataset.min=x.min;
+    o.dataset.max=x.max;
     s.appendChild(o);
   });
+}
+
+// Platform filter
+function filterByPlatform(platform){
+  filteredPlatform=platform;
+  document.querySelectorAll(".platform-btn").forEach(btn=>btn.classList.remove("active"));
+  event.target.classList.add("active");
+  populateServices(allServices);
 }
 
 // Update price & description
@@ -34,30 +50,25 @@ function updatePrice(){
   document.getElementById("desc").innerText=opt.dataset.desc;
 }
 
-// Filter services
+// Filter search
 function filterServices(){
   const q=document.getElementById("serviceSearch").value.toLowerCase();
   const filtered = allServices.filter(s=>(s.name+s.category).toLowerCase().includes(q));
-  const s=document.getElementById("service");
-  s.innerHTML="<option value=''>Select Service</option>";
-  filtered.forEach(x=>{
-    const o=document.createElement("option");
-    o.value=x.id;
-    o.textContent=`${x.name} (${x.category})`;
-    o.dataset.price=x.priceUGX;
-    o.dataset.desc=x.desc;
-    o.dataset.platform=x.platform;
-    s.appendChild(o);
-  });
+  populateServices(filtered);
 }
 
-// Place order
+// Place order with min/max validation
 async function placeOrder(){
   const service=document.getElementById("service").value;
   const link=document.getElementById("link").value;
-  const qty=document.getElementById("qty").value;
+  const qty=parseInt(document.getElementById("qty").value);
   const price=parseInt(document.getElementById("price").innerText);
   if(!service||!link||!qty) return alert("Fill all fields");
+
+  const sel=document.getElementById("service");
+  const opt=sel.options[sel.selectedIndex];
+  const min=parseInt(opt.dataset.min), max=parseInt(opt.dataset.max);
+  if(qty<min || qty>max) return alert(`Quantity must be between ${min} and ${max}`);
 
   const res=await fetch("/api/order",{
     method:"POST",
@@ -116,18 +127,14 @@ async function loadOrders(){
     `;
     tbody.appendChild(tr);
 
-    // Auto-refund canceled orders
     if(o.status=="Canceled" && o.price>0){
       fetch("/api/deposit",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email,amount:o.price})});
-      o.price=0; // mark refunded
+      o.price=0;
     }
   });
 }
 
-// Auto refresh orders
 setInterval(loadOrders,15000);
-
-// Init
 loadWallet();
 loadServices();
 loadOrders();
