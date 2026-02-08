@@ -1,49 +1,116 @@
-/* ===== LOGIN PAGE ===== */
-.login-container {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-  padding: 20px;
+* {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
 }
 
-.login-box {
-  background: #ffffff;
-  width: 100%;
-  max-width: 420px;      /* 👈 BIGGER BOX */
-  padding: 40px 35px;    /* 👈 MORE SPACE */
-  border-radius: 16px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+body {
+  margin: 0;
+  background: #f4f6f9;
+}
+
+.topbar {
+  background: #111;
+  color: #fff;
+  padding: 20px;
   text-align: center;
 }
 
-.login-box h1 {
-  font-size: 28px;       /* 👈 BIG TITLE */
-  margin-bottom: 10px;
-  color: #222;
+.container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 20px;
 }
 
-.login-box p {
-  font-size: 16px;
-  color: #666;
-  margin-bottom: 30px;
+.card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 30px;
+  margin-bottom: 25px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
 }
 
-/* GOOGLE BUTTON */
-.google-btn {
+.card h3 {
+  margin-top: 0;
+}
+
+#wallet {
+  font-size: 26px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+input, select {
   width: 100%;
   padding: 16px;
   font-size: 17px;
-  border-radius: 10px;
-  border: none;
-  background: #4285f4;
-  color: #fff;
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 12px;
+  border: 2px solid #ddd;
+  margin-bottom: 15px;
 }
 
-.google-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(66,133,244,0.4);
+input:focus, select:focus {
+  border-color: #4caf50;
+  outline: none;
 }
+
+.desc {
+  background: #f1f3f5;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  font-size: 15px;
+}
+
+.price {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.order-btn {
+  width: 100%;
+  padding: 16px;
+  font-size: 18px;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.pay-btns {
+  display: flex;
+  gap: 15px;
+}
+
+.mtn {
+  flex: 1;
+  background: #ffcc00;
+  border: none;
+  padding: 14px;
+  font-size: 16px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.airtel {
+  flex: 1;
+  background: #e60000;
+  color: #fff;
+  border: none;
+  padding: 14px;
+  font-size: 16px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .container {
+    padding: 15px;
+  }
+
+  .card {
+    padding: 22px;
+  }
+  }
