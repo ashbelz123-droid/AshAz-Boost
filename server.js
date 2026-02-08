@@ -43,6 +43,24 @@ app.post("/api/deposit", async (req, res) => {
   res.json(user);
 });
 
+// FETCH SERVICES FROM SOCIALSPHARE
+app.get("/api/services", async (req, res) => {
+  try {
+    const response = await axios.post("https://socialsphare.com/api/v2", {
+      key: process.env.SOCIALSPHARE_API_KEY,
+      action: "services"
+    });
+    // Convert prices to UGX
+    const services = response.data.map(s => ({
+      ...s,
+      priceUGX: s.rate * 3500
+    }));
+    res.json(services);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch services" });
+  }
+});
+
 // PLACE ORDER
 app.post("/api/order", async (req, res) => {
   const { service, link, quantity, price } = req.body;
@@ -53,54 +71,65 @@ app.post("/api/order", async (req, res) => {
   user.wallet -= price;
   await user.save();
 
-  const response = await axios.post("https://socialsphare.com/api/v2", {
-    key: process.env.SOCIALSPHARE_API_KEY,
-    action: "add",
-    service,
-    link,
-    quantity
-  });
+  try {
+    const response = await axios.post("https://socialsphare.com/api/v2", {
+      key: process.env.SOCIALSPHARE_API_KEY,
+      action: "add",
+      service,
+      link,
+      quantity
+    });
 
-  const order = await Order.create({
-    service,
-    link,
-    quantity,
-    price,
-    providerOrderId: response.data.order
-  });
+    const order = await Order.create({
+      service,
+      link,
+      quantity,
+      price,
+      providerOrderId: response.data.order
+    });
 
-  res.json(order);
+    res.json(order);
+  } catch (err) {
+    // Refund on API fail
+    user.wallet += price;
+    await user.save();
+    res.status(500).json({ error: "Failed to place order, refunded wallet" });
+  }
 });
 
-// AUTO STATUS & REFUND
+// AUTO STATUS CHECK & REFUND
 setInterval(async () => {
   const orders = await Order.find({ refunded: false });
   for (const order of orders) {
-    const statusRes = await axios.post("https://socialsphare.com/api/v2", {
-      key: process.env.SOCIALSPHARE_API_KEY,
-      action: "status",
-      order: order.providerOrderId
-    });
+    try {
+      const statusRes = await axios.post("https://socialsphare.com/api/v2", {
+        key: process.env.SOCIALSPHARE_API_KEY,
+        action: "status",
+        order: order.providerOrderId
+      });
 
-    order.status = statusRes.data.status;
+      order.status = statusRes.data.status;
 
-    if (["Canceled", "Failed"].includes(order.status)) {
-      const user = await User.findOne();
-      user.wallet += order.price;
-      order.refunded = true;
-      await user.save();
+      if (["Canceled", "Failed"].includes(order.status)) {
+        const user = await User.findOne();
+        user.wallet += order.price;
+        order.refunded = true;
+        await user.save();
+      }
+
+      if (order.status === "Partial") {
+        const refund = (statusRes.data.remains / order.quantity) * order.price;
+        const user = await User.findOne();
+        user.wallet += refund;
+        order.refunded = true;
+        await user.save();
+      }
+
+      await order.save();
+    } catch (err) {
+      console.log("Status check failed for order:", order._id);
     }
-
-    if (order.status === "Partial") {
-      const refund = (statusRes.data.remains / order.quantity) * order.price;
-      const user = await User.findOne();
-      user.wallet += refund;
-      order.refunded = true;
-      await user.save();
-    }
-
-    await order.save();
   }
-}, 300000);
+}, 300000); // every 5 min
 
 app.listen(PORT, "0.0.0.0", () => console.log(`✅ Server running on port ${PORT}`));
