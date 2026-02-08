@@ -1,34 +1,26 @@
 body {
   font-family: Arial;
-  background: #f4f6f8;
   margin: 0;
-  padding: 15px;
+  background: #f4f6f8;
 }
 
 header {
-  text-align: center;
-  padding: 30px;
-}
-
-.btn {
-  background: #2563eb;
+  background: linear-gradient(135deg,#2563eb,#1e40af);
   color: white;
-  padding: 10px 20px;
-  text-decoration: none;
-  border-radius: 6px;
+  padding: 20px;
+  text-align: center;
 }
 
-.cards {
+.container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 10px;
+  gap: 15px;
+  padding: 15px;
 }
 
 .card {
   background: white;
   padding: 15px;
-  border-radius: 8px;
-  margin-bottom: 15px;
+  border-radius: 10px;
 }
 
 input, select, button {
@@ -38,17 +30,41 @@ input, select, button {
 }
 
 button {
-  background: #22c55e;
-  color: white;
   border: none;
+  background: #2563eb;
+  color: white;
   border-radius: 6px;
 }
 
-.mtn {
-  background: #ffcc00;
-  color: black;
+.mtn { background: #ffcc00; color: black; }
+.airtel { background: red; }
+
+.desc {
+  background: #eef2ff;
+  padding: 8px;
+  margin-top: 8px;
+  font-size: 14px;
 }
 
-.airtel {
-  background: #e11d48;
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(120px,1fr));
+  gap: 10px;
+  padding: 15px;
 }
+
+.btn {
+  background: white;
+  color: #2563eb;
+  padding: 10px;
+  border-radius: 8px;
+  display: inline-block;
+  margin-top: 10px;
+  text-decoration: none;
+}
+
+@media(min-width:768px){
+  .container {
+    grid-template-columns: repeat(3,1fr);
+  }
+  }
