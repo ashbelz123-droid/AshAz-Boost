@@ -2,60 +2,59 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>AshMediaBoost | Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AshMediaBoost Dashboard</title>
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-<header class="header">
-  <div class="logo">AshMediaBoost</div>
-  <div class="user">Dashboard</div>
-</header>
+<div class="navbar">
+  <h2>AshMediaBoost</h2>
+  <div id="userEmail">user@ashmediaboost.com</div>
+</div>
 
-<div class="main">
+<div class="container">
 
-  <!-- PLATFORM FILTER -->
-  <div class="platform-filter">
-    <button class="platform-btn active" onclick="filterByPlatform('All')">All</button>
-    <button class="platform-btn" onclick="filterByPlatform('Instagram')"><i class="fa-brands fa-instagram"></i> Instagram</button>
-    <button class="platform-btn" onclick="filterByPlatform('TikTok')"><i class="fa-brands fa-tiktok"></i> TikTok</button>
-    <button class="platform-btn" onclick="filterByPlatform('YouTube')"><i class="fa-brands fa-youtube"></i> YouTube</button>
-    <button class="platform-btn" onclick="filterByPlatform('Facebook')"><i class="fa-brands fa-facebook"></i> Facebook</button>
-    <button class="platform-btn" onclick="filterByPlatform('X')"><i class="fa-brands fa-x-twitter"></i> X</button>
-    <button class="platform-btn" onclick="filterByPlatform('Telegram')"><i class="fa-brands fa-telegram"></i> Telegram</button>
-  </div>
-
-  <!-- WALLET CARD -->
+  <!-- Wallet Card -->
   <div class="card wallet-card">
-    <h3>Wallet Balance</h3>
-    <div id="wallet" class="wallet-amount">UGX 0</div>
-    <input id="deposit" type="number" placeholder="Enter amount (min 500 UGX)">
-    <button class="btn mtn" onclick="deposit()">Deposit MTN / Airtel</button>
+    <h3>👤 Wallet Balance</h3>
+    <div id="walletBalance" class="wallet-amount">UGX 0</div>
+
+    <input type="number" id="depositAmount" placeholder="Enter amount (min 500 UGX)" min="500">
+    <div class="deposit-buttons">
+      <button class="mtn" onclick="deposit('MTN')"><i class="fa fa-mobile-alt"></i> Deposit with MTN</button>
+      <button class="airtel" onclick="deposit('AIRTEL')"><i class="fa fa-mobile-alt"></i> Deposit with Airtel</button>
+    </div>
+    <div class="note">Minimum deposit is <b>500 UGX</b>. Wallet is used automatically when placing orders.</div>
   </div>
 
-  <!-- SEARCH -->
-  <div class="card">
-    <input
-      id="serviceSearch"
-      type="text"
-      placeholder="🔍 Search services..."
-      onkeyup="filterServices()"
-    />
+  <!-- Search / Filter -->
+  <div class="card search-card">
+    <input type="text" id="searchInput" placeholder="Search services..." onkeyup="filterServices()">
   </div>
 
-  <!-- ORDER CARD -->
-  <div class="card order-card">
-    <h3>Create Order</h3>
-    <select id="service" onchange="updatePrice()"></select>
-    <div id="desc" class="service-desc">Select a service</div>
-    <input id="link" placeholder="Post / Profile Link">
-    <input id="qty" type="number" placeholder="Quantity">
-    <div class="price-box">Total Price: <span id="price">0</span> UGX</div>
-    <button class="btn order-btn" onclick="placeOrder()">Place Order</button>
+  <!-- Services Table -->
+  <div class="card services-card">
+    <h3>📋 Available Services</h3>
+    <table id="servicesTable">
+      <thead>
+        <tr>
+          <th>Platform</th>
+          <th>Service</th>
+          <th>Price (UGX)</th>
+          <th>Min</th>
+          <th>Max</th>
+          <th>Description</th>
+          <th>Quantity</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   </div>
 
-  <!-- ORDERS TABLE -->
+  <!-- Orders Table -->
   <div class="card orders-card">
     <h3>📝 Your Orders</h3>
     <table id="ordersTable">
@@ -64,9 +63,8 @@
           <th>Order ID</th>
           <th>Platform</th>
           <th>Service</th>
-          <th>Link</th>
           <th>Quantity</th>
-          <th>Price (UGX)</th>
+          <th>Price</th>
           <th>Status</th>
         </tr>
       </thead>
@@ -78,4 +76,4 @@
 
 <script src="script.js"></script>
 </body>
-  </html>
+    </html>
