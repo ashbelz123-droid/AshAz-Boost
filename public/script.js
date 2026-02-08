@@ -1,126 +1,148 @@
-let email = localStorage.getItem("userEmail");
-if(!email) window.location.href="/login";
+let currentEmail = "user@ashmediaboost.com";
+let walletBalance = 0;
+let services = [];
+let orders = [];
 
-let allServices=[], filteredPlatform="All";
-
-async function loadWallet(){
-  const res=await fetch(`/api/wallet/${email}`);
-  const data=await res.json();
-  document.getElementById("wallet").innerText = "UGX "+(data.wallet || 0).toLocaleString();
+// --------------------
+// Update Wallet
+// --------------------
+async function updateWallet() {
+  const res = await fetch(`/api/wallet/${currentEmail}`);
+  const data = await res.json();
+  walletBalance = data.wallet;
+  document.getElementById("walletBalance").innerText = "UGX " + walletBalance.toLocaleString();
 }
+updateWallet();
 
-async function loadServices(){
-  const res=await fetch("/api/services");
-  allServices = await res.json();
-  populateServices(allServices);
-}
+// --------------------
+// Deposit Function
+// --------------------
+async function deposit(channel){
+  const amount = parseInt(document.getElementById("depositAmount").value);
+  if(!amount || amount < 500){ alert("Minimum deposit is 500 UGX"); return; }
 
-function populateServices(list){
-  const s=document.getElementById("service");
-  s.innerHTML="<option value=''>Select Service</option>";
-  list.forEach(x=>{
-    if(filteredPlatform!=="All" && x.platform!==filteredPlatform) return;
-    const o=document.createElement("option");
-    o.value=x.id;
-    o.textContent=`${x.name} (${x.category})`;
-    o.dataset.price=x.priceUGX;
-    o.dataset.desc=x.desc;
-    o.dataset.platform=x.platform;
-    o.dataset.min=x.min;
-    o.dataset.max=x.max;
-    s.appendChild(o);
+  await fetch("/api/deposit", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ email: currentEmail, amount })
   });
+
+  updateWallet();
+  alert("Deposit successful!");
 }
 
-function filterByPlatform(platform){
-  filteredPlatform=platform;
-  document.querySelectorAll(".platform-btn").forEach(btn=>btn.classList.remove("active"));
-  event.target.classList.add("active");
-  populateServices(allServices);
+// --------------------
+// Fetch Services
+// --------------------
+async function loadServices(){
+  const res = await fetch("/api/services");
+  services = await res.json();
+  renderServices();
 }
 
-function updatePrice(){
-  const sel=document.getElementById("service");
-  const opt=sel.options[sel.selectedIndex];
-  if(!opt || !opt.dataset.price) return;
-  document.getElementById("price").innerText=opt.dataset.price;
-  document.getElementById("desc").innerText=opt.dataset.desc;
-}
-
-function filterServices(){
-  const q=document.getElementById("serviceSearch").value.toLowerCase();
-  const filtered = allServices.filter(s=>(s.name+s.category).toLowerCase().includes(q));
-  populateServices(filtered);
-}
-
-async function placeOrder(){
-  const service=document.getElementById("service").value;
-  const link=document.getElementById("link").value;
-  const qty=parseInt(document.getElementById("qty").value);
-  const price=parseInt(document.getElementById("price").innerText);
-  if(!service||!link||!qty) return alert("Fill all fields");
-
-  const sel=document.getElementById("service");
-  const opt=sel.options[sel.selectedIndex];
-  const min=parseInt(opt.dataset.min), max=parseInt(opt.dataset.max);
-  if(qty<min || qty>max) return alert(`Quantity must be between ${min} and ${max}`);
-
-  const res=await fetch("/api/order",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email,service,link,quantity:qty,price})});
-  const data=await res.json();
-  if(data.error) return alert(data.error);
-  alert("Order placed successfully");
-  loadWallet();
-  loadOrders();
-}
-
-async function deposit(){
-  const amount=parseInt(document.getElementById("deposit").value);
-  if(!amount || amount<500) return alert("Minimum deposit: 500 UGX");
-  const res=await fetch("/api/deposit",{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({email,amount}) });
-  await res.json();
-  loadWallet();
-}
-
-async function loadOrders(){
-  const res=await fetch(`/api/orders/${email}`);
-  const data=await res.json();
-  const tbody=document.querySelector("#ordersTable tbody");
-  tbody.innerHTML="";
-  data.forEach(o=>{
-    const tr=document.createElement("tr");
-    const platformIcon={
-      "Instagram":"<i class='fa-brands fa-instagram'></i>",
-      "TikTok":"<i class='fa-brands fa-tiktok'></i>",
-      "YouTube":"<i class='fa-brands fa-youtube'></i>",
-      "Facebook":"<i class='fa-brands fa-facebook'></i>",
-      "X":"<i class='fa-brands fa-x-twitter'></i>",
-      "Telegram":"<i class='fa-brands fa-telegram'></i>"
-    }[o.platform]||"";
-    const statusClass={
-      "Pending":"status-pending",
-      "Completed":"status-completed",
-      "Canceled":"status-canceled",
-      "Partial":"status-partial"
-    }[o.status]||"";
-    tr.innerHTML=`
-      <td>${o.id}</td>
-      <td>${platformIcon} ${o.platform}</td>
-      <td>${o.service}</td>
-      <td>${o.link}</td>
-      <td>${o.quantity}</td>
-      <td>${o.price}</td>
-      <td class="status ${statusClass}">${o.status}</td>
+// --------------------
+// Render Services Table
+// --------------------
+function renderServices(){
+  const tbody = document.querySelector("#servicesTable tbody");
+  tbody.innerHTML = "";
+  services.forEach(s=>{
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${getPlatformIcon(s.platform)} ${s.platform}</td>
+      <td>${s.name}</td>
+      <td>${s.priceUGX.toLocaleString()}</td>
+      <td>${s.min}</td>
+      <td>${s.max}</td>
+      <td>${s.desc}</td>
+      <td><input type="number" min="${s.min}" max="${s.max}" value="${s.min}" id="qty_${s.id}"></td>
+      <td><button onclick="placeOrder(${s.id}, ${s.priceUGX})">Order</button></td>
     `;
     tbody.appendChild(tr);
+  });
+}
+loadServices();
 
-    if(o.status=="Canceled" && o.price>0){
-      fetch("/api/deposit",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email,amount:o.price})});
-      o.price=0;
-    }
+// --------------------
+// Place Order
+// --------------------
+async function placeOrder(serviceId, priceUGX){
+  const qty = parseInt(document.getElementById(`qty_${serviceId}`).value);
+  const service = services.find(s => s.id === serviceId);
+  if(!service){ alert("Service not found"); return; }
+
+  const totalPrice = priceUGX * qty / service.min; // Adjust price scaling
+  if(totalPrice > walletBalance){ alert("Insufficient balance"); return; }
+
+  const res = await fetch("/api/order", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ email:currentEmail, service:serviceId, link:"", quantity:qty, price:totalPrice })
+  });
+  const data = await res.json();
+  if(data.success){ alert("Order placed!"); updateWallet(); loadOrders(); }
+  else{ alert(data.error); }
+}
+
+// --------------------
+// Load Orders
+// --------------------
+async function loadOrders(){
+  const res = await fetch(`/api/orders/${currentEmail}`);
+  orders = await res.json();
+  const tbody = document.querySelector("#ordersTable tbody");
+  tbody.innerHTML = "";
+  orders.forEach(o=>{
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${o.id}</td>
+      <td>${o.platform}</td>
+      <td>${o.service}</td>
+      <td>${o.quantity}</td>
+      <td>${o.price.toLocaleString()}</td>
+      <td>${o.status}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+loadOrders();
+
+// --------------------
+// Search / Filter
+// --------------------
+function filterServices(){
+  const search = document.getElementById("searchInput").value.toLowerCase();
+  const filtered = services.filter(s => s.name.toLowerCase().includes(search) || s.platform.toLowerCase().includes(search));
+  const tbody = document.querySelector("#servicesTable tbody");
+  tbody.innerHTML = "";
+  filtered.forEach(s=>{
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${getPlatformIcon(s.platform)} ${s.platform}</td>
+      <td>${s.name}</td>
+      <td>${s.priceUGX.toLocaleString()}</td>
+      <td>${s.min}</td>
+      <td>${s.max}</td>
+      <td>${s.desc}</td>
+      <td><input type="number" min="${s.min}" max="${s.max}" value="${s.min}" id="qty_${s.id}"></td>
+      <td><button onclick="placeOrder(${s.id}, ${s.priceUGX})">Order</button></td>
+    `;
+    tbody.appendChild(tr);
   });
 }
 
-setInterval(loadOrders,15000);
-loadWallet();
-loadServices();
-loadOrders();
+// --------------------
+// Platform Icons
+// --------------------
+function getPlatformIcon(name){
+  switch(name.toLowerCase()){
+    case "instagram": return '<i class="fab fa-instagram"></i>';
+    case "facebook": return '<i class="fab fa-facebook"></i>';
+    case "twitter": return '<i class="fab fa-twitter"></i>';
+    case "youtube": return '<i class="fab fa-youtube"></i>';
+    case "telegram": return '<i class="fab fa-telegram"></i>';
+    case "tiktok": return '<i class="fab fa-tiktok"></i>';
+    case "linkedin": return '<i class="fab fa-linkedin"></i>';
+    default: return '<i class="fas fa-globe"></i>';
+  }
+}
