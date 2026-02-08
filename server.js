@@ -1,46 +1,106 @@
+require("dotenv").config();
 const express = require("express");
 const path = require("path");
+const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const axios = require("axios");
 
 const app = express();
-
-// 🔥 REQUIRED FOR RENDER
 const PORT = process.env.PORT || 10000;
 
-// MIDDLEWARES
 app.use(cors());
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static("public"));
 
-// STATIC FILES
-app.use(express.static(path.join(__dirname, "public")));
+// DATABASE
+mongoose.connect(process.env.MONGO_URI);
+
+// MODELS
+const User = require("./models/User");
+const Order = require("./models/Order");
 
 // ROUTES
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+app.get("/", (req, res) => res.sendFile(path.join(__dirname, "public", "index.html")));
+app.get("/dashboard", (req, res) => res.sendFile(path.join(__dirname, "public", "dashboard.html")));
+
+// Health check
+app.get("/health", (req, res) => res.status(200).send("OK"));
+
+// USER INFO
+app.get("/api/user", async (req, res) => {
+  let user = await User.findOne();
+  if (!user) user = await User.create({ wallet: 0 });
+  res.json(user);
 });
 
-app.get("/login", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "login.html"));
+// DEPOSIT
+app.post("/api/deposit", async (req, res) => {
+  const { amount } = req.body;
+  const user = await User.findOne();
+  user.wallet += amount;
+  await user.save();
+  res.json(user);
 });
 
-app.get("/dashboard", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "dashboard.html"));
+// PLACE ORDER
+app.post("/api/order", async (req, res) => {
+  const { service, link, quantity, price } = req.body;
+  const user = await User.findOne();
+
+  if (user.wallet < price) return res.status(400).json({ error: "Insufficient balance" });
+
+  user.wallet -= price;
+  await user.save();
+
+  const response = await axios.post("https://socialsphare.com/api/v2", {
+    key: process.env.SOCIALSPHARE_API_KEY,
+    action: "add",
+    service,
+    link,
+    quantity
+  });
+
+  const order = await Order.create({
+    service,
+    link,
+    quantity,
+    price,
+    providerOrderId: response.data.order
+  });
+
+  res.json(order);
 });
 
-// HEALTH CHECK (VERY IMPORTANT)
-app.get("/health", (req, res) => {
-  res.status(200).send("OK");
-});
+// AUTO STATUS & REFUND
+setInterval(async () => {
+  const orders = await Order.find({ refunded: false });
+  for (const order of orders) {
+    const statusRes = await axios.post("https://socialsphare.com/api/v2", {
+      key: process.env.SOCIALSPHARE_API_KEY,
+      action: "status",
+      order: order.providerOrderId
+    });
 
-// TEST API ENDPOINT (PREVENT EARLY EXIT)
-app.get("/api/test", (req, res) => {
-  res.json({ status: "API working" });
-});
+    order.status = statusRes.data.status;
 
-// START SERVER
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`✅ Server running on port ${PORT}`);
-});
+    if (["Canceled", "Failed"].includes(order.status)) {
+      const user = await User.findOne();
+      user.wallet += order.price;
+      order.refunded = true;
+      await user.save();
+    }
+
+    if (order.status === "Partial") {
+      const refund = (statusRes.data.remains / order.quantity) * order.price;
+      const user = await User.findOne();
+      user.wallet += refund;
+      order.refunded = true;
+      await user.save();
+    }
+
+    await order.save();
+  }
+}, 300000);
+
+app.listen(PORT, "0.0.0.0", () => console.log(`✅ Server running on port ${PORT}`));
