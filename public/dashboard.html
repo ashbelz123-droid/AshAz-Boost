@@ -6,9 +6,9 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
-
 <header>
-  <h2>👤 Welcome, User</h2>
+  <h2>👤 Dashboard</h2>
+  <button onclick="logout()" class="btn-logout">Logout</button>
 </header>
 
 <div class="container">
@@ -23,11 +23,7 @@
 
   <div class="card">
     <h3>📦 Place Order</h3>
-
-    <select id="service" onchange="updateDesc()">
-      <option value="">Loading services...</option>
-    </select>
-
+    <select id="service" onchange="updateDesc()"></select>
     <div id="desc" class="desc">Select service to see description</div>
     <input type="text" id="url" placeholder="Enter URL">
     <input type="number" id="quantity" placeholder="Quantity">
@@ -44,4 +40,4 @@
 
 <script src="script.js"></script>
 </body>
-                          </html>
+  </html>
