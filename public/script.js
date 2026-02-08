@@ -1,25 +1,50 @@
-let balance = 0;
+async function load() {
+  const res = await fetch("/api/data");
+  const data = await res.json();
+  document.getElementById("wallet").innerText = "UGX " + data.wallet;
+  document.getElementById("orders").innerHTML =
+    data.orders.map(o => `<li>${o.service} - ${o.quantity} (${o.status})</li>`).join("");
+}
+load();
 
-function deposit() {
-  const amount = Number(document.getElementById("amount").value);
-
-  if (amount < 500) {
-    alert("Minimum deposit is 500 UGX");
-    return;
-  }
-
-  balance += amount;
-  document.getElementById("balance").innerText = "UGX " + balance;
-  alert("Deposit successful");
+function updateDesc() {
+  const s = service.value;
+  const d = {
+    "Instagram Followers": "High quality • No refill • Fast",
+    "Telegram Members": "Max 10M • Cancel enabled ⚠️",
+    "TikTok Views": "Fast start • Realistic views",
+    "YouTube Subs": "Slow & safe delivery"
+  };
+  desc.innerText = d[s] || "";
 }
 
-function order() {
-  const qty = Number(document.getElementById("qty").value);
+async function deposit() {
+  const amount = Number(document.getElementById("amount").value);
+  const res = await fetch("/api/deposit", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ amount })
+  });
+  const data = await res.json();
+  if (data.error) alert(data.error);
+  load();
+}
 
-  if (!qty || qty <= 0) {
-    alert("Enter quantity");
-    return;
-  }
+async function order() {
+  const qty = Number(quantity.value);
+  const price = qty * 5; // example price
+  document.getElementById("price").innerText = price;
 
-  alert("Order placed (API coming next)");
+  const res = await fetch("/api/order", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      service: service.value,
+      quantity: qty,
+      price
+    })
+  });
+  const data = await res.json();
+  if (data.error) alert(data.error);
+  load();
 }
