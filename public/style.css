@@ -1,116 +1,109 @@
 * {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
-  font-family: Arial, sans-serif;
+  font-family: "Segoe UI", sans-serif;
 }
 
 body {
-  margin: 0;
-  background: #f4f6f9;
-}
-
-.topbar {
-  background: #111;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  min-height: 100vh;
   color: #fff;
-  padding: 20px;
-  text-align: center;
 }
 
-.container {
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(10px);
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.user {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.main {
   max-width: 1100px;
   margin: auto;
-  padding: 20px;
+  padding: 30px;
 }
 
 .card {
-  background: #fff;
-  border-radius: 16px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 20px;
   padding: 30px;
   margin-bottom: 25px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+  backdrop-filter: blur(12px);
 }
 
-.card h3 {
-  margin-top: 0;
+.wallet-card {
+  text-align: center;
 }
 
-#wallet {
-  font-size: 26px;
+.wallet-amount {
+  font-size: 36px;
   font-weight: bold;
-  margin-bottom: 20px;
+  margin: 20px 0;
 }
 
 input, select {
   width: 100%;
   padding: 16px;
-  font-size: 17px;
-  border-radius: 12px;
-  border: 2px solid #ddd;
+  border-radius: 14px;
+  border: none;
   margin-bottom: 15px;
+  font-size: 16px;
 }
 
 input:focus, select:focus {
-  border-color: #4caf50;
   outline: none;
 }
 
-.desc {
-  background: #f1f3f5;
-  padding: 15px;
-  border-radius: 12px;
-  margin-bottom: 15px;
-  font-size: 15px;
-}
-
-.price {
-  font-size: 20px;
-  font-weight: bold;
-  margin-bottom: 15px;
-}
-
-.order-btn {
+.btn {
   width: 100%;
   padding: 16px;
-  font-size: 18px;
-  background: #4caf50;
-  color: white;
+  border-radius: 14px;
   border: none;
-  border-radius: 12px;
+  font-size: 17px;
   cursor: pointer;
+  transition: 0.3s;
 }
 
-.pay-btns {
-  display: flex;
-  gap: 15px;
+.btn:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
 }
 
 .mtn {
-  flex: 1;
-  background: #ffcc00;
-  border: none;
-  padding: 14px;
-  font-size: 16px;
-  border-radius: 10px;
-  cursor: pointer;
+  background: linear-gradient(45deg, #ffcc00, #ffb300);
+  color: #000;
 }
 
-.airtel {
-  flex: 1;
-  background: #e60000;
-  color: #fff;
-  border: none;
-  padding: 14px;
-  font-size: 16px;
-  border-radius: 10px;
-  cursor: pointer;
+.order-btn {
+  background: linear-gradient(45deg, #00c853, #00e676);
+  color: #000;
 }
 
-/* RESPONSIVE */
-@media (max-width: 768px) {
-  .container {
-    padding: 15px;
-  }
+.service-desc {
+  background: rgba(0,0,0,0.3);
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
 
-  .card {
-    padding: 22px;
-  }
+.price-box {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  text-align: center;
   }
