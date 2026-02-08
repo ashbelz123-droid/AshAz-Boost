@@ -1,195 +1,36 @@
-/* Reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
 body {
-  background: #f4f6f9;
-  color: #333;
-}
-
-/* Container */
-.container {
-  max-width: 1200px;
-  margin: 20px auto;
-  padding: 10px;
-}
-
-/* Header */
-header {
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-header h1 {
-  font-size: 2.2em;
-  color: #222;
-  margin-bottom: 5px;
-}
-
-header p {
-  font-size: 1.1em;
-  color: #555;
-}
-
-/* Card base style */
-.card {
-  background: #fff;
-  border-radius: 15px;
+  font-family: Arial;
+  background: #0f172a;
+  color: white;
   padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.08);
-  transition: transform 0.2s, box-shadow 0.3s;
 }
 
-.card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 25px rgba(0,0,0,0.12);
-}
-
-.card h3 {
-  font-size: 1.5em;
-  margin-bottom: 15px;
-}
-
-/* Inputs */
-input[type="text"],
-input[type="number"],
-select {
-  width: 100%;
-  padding: 12px 15px;
-  margin-bottom: 15px;
+.card {
+  background: #1e293b;
+  padding: 15px;
   border-radius: 10px;
-  border: 1px solid #ccc;
-  font-size: 1em;
-  transition: border-color 0.2s;
+  margin-bottom: 15px;
 }
 
-input:focus,
-select:focus {
-  border-color: #007bff;
-  outline: none;
-}
-
-/* Buttons */
 button {
-  padding: 12px 20px;
-  border: none;
-  border-radius: 10px;
-  font-size: 1em;
-  cursor: pointer;
-  color: #fff;
-  margin-right: 10px;
-  transition: transform 0.2s, filter 0.2s;
-}
-
-button:hover {
-  transform: translateY(-2px);
-  filter: brightness(1.1);
-}
-
-/* MTN button */
-button.mtn {
-  background: #FFD700;
-  color: #000;
-}
-
-/* Airtel button */
-button.airtel {
-  background: #FF4C4C;
-}
-
-/* Place Order button */
-.card button:last-of-type {
-  background: #007bff;
-}
-
-/* Note */
-.note {
-  font-size: 0.9em;
-  color: #555;
-  margin-top: 10px;
-}
-
-/* Description box */
-.description-box {
-  background: #fffbe6;
-  border-left: 5px solid #ffc107;
-  padding: 15px;
-  margin-bottom: 15px;
-  border-radius: 10px;
-  font-size: 0.95em;
-  color: #333;
-  transition: border-color 0.3s, background 0.3s;
-}
-
-/* Social colored description boxes */
-.description-instagram { border-color: #e1306c; background: #ffe6f0; }
-.description-twitter   { border-color: #1DA1F2; background: #e6f4ff; }
-.description-facebook  { border-color: #1877F2; background: #e6f0ff; }
-.description-youtube   { border-color: #FF0000; background: #ffe6e6; }
-.description-telegram  { border-color: #0088cc; background: #e6f7ff; }
-.description-tiktok    { border-color: #000000; background: #e6e6e6; color:#000; }
-.description-linkedin  { border-color: #0a66c2; background: #e6f0ff; }
-
-/* Orders list */
-#ordersList {
-  list-style-type: none;
-}
-
-#ordersList li {
-  padding: 12px;
-  margin-bottom: 8px;
-  background: #f0f0f0;
-  border-radius: 8px;
-  font-size: 0.95em;
-  transition: transform 0.2s;
-}
-
-#ordersList li:hover {
-  transform: translateY(-2px);
-  background: #e0e0e0;
-}
-
-/* Table for services */
-table {
+  padding: 10px;
   width: 100%;
-  border-collapse: collapse;
-  margin-top: 15px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
 }
 
-table th,
-table td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
+.mtn button {
+  background: #ffcc00;
 }
 
-table th {
-  background-color: #007bff;
-  color: #fff;
-  border-radius: 5px 5px 0 0;
+.airtel button {
+  background: red;
+  color: white;
 }
 
-table tr:hover {
-  background-color: #f1f1f1;
-}
-
-/* Footer */
-footer {
-  text-align: center;
-  margin-top: 40px;
-  padding: 15px;
-  font-size: 0.9em;
-  color: #777;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .card { padding: 15px; }
-  input, select { padding: 10px; }
-  button { width: 100%; margin-bottom: 10px; }
+input, select {
+  width: 100%;
+  margin: 6px 0;
+  padding: 8px;
 }
