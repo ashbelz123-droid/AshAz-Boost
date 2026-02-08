@@ -1,136 +1,49 @@
-/* ===== GENERAL BODY ===== */
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  margin: 0;
-  background: #f4f6f8;
-  color: #111;
+/* ===== LOGIN PAGE ===== */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  padding: 20px;
 }
 
-/* ===== HEADER ===== */
-header {
-  background: linear-gradient(135deg,#2563eb,#1e40af);
-  color: white;
-  padding: 30px 20px;
+.login-box {
+  background: #ffffff;
+  width: 100%;
+  max-width: 420px;      /* 👈 BIGGER BOX */
+  padding: 40px 35px;    /* 👈 MORE SPACE */
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.25);
   text-align: center;
 }
-header h1, header h2 {
-  margin: 0;
-  font-size: 2.5rem;
-}
-header p {
-  font-size: 1.2rem;
-  margin-top: 10px;
-}
 
-/* ===== LOGOUT BUTTON ===== */
-.btn-logout {
-  padding: 12px 18px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  background: red;
-  color: white;
-  font-size: 1rem;
-  float: right;
-  margin-top: -50px;
-}
-
-/* ===== CONTAINER ===== */
-.container {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 20px;
-  padding: 25px;
-}
-
-/* ===== CARDS ===== */
-.card {
-  background: white;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.12);
-  font-size: 1.1rem;
-}
-.card h3 {
-  font-size: 1.8rem;
-  margin-bottom: 15px;
-}
-
-/* ===== INPUTS, SELECTS, BUTTONS ===== */
-input, select {
-  width: 100%;
-  padding: 15px;
-  margin-top: 10px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 1.1rem;
-}
-button {
-  width: 100%;
-  padding: 15px;
-  margin-top: 15px;
-  border: none;
-  border-radius: 8px;
-  background: #2563eb;
-  color: white;
-  font-size: 1.2rem;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-}
-button:hover {
-  opacity: 0.9;
-}
-.mtn { background: #ffcc00; color: black; }
-.airtel { background: red; }
-
-/* ===== DESCRIPTION BOX ===== */
-.desc {
-  background: #eef2ff;
-  padding: 15px;
-  margin-top: 10px;
-  border-radius: 8px;
-  font-size: 1rem;
-}
-
-/* ===== CARDS GRID FOR HOME PAGE ===== */
-.cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(150px,1fr));
-  gap: 20px;
-  padding: 25px;
-  text-align: center;
-}
-.cards .card {
-  padding: 40px 20px;
-  font-size: 1.5rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-.cards .card i {
-  font-size: 2rem;
+.login-box h1 {
+  font-size: 28px;       /* 👈 BIG TITLE */
   margin-bottom: 10px;
-  display: block;
-}
-.cards .card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+  color: #222;
 }
 
-/* ===== ORDERS LIST ===== */
-#orders {
-  list-style: none;
-  padding: 0;
-}
-#orders li {
-  padding: 12px;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  background: #f0f4ff;
-  font-size: 1.1rem;
+.login-box p {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 30px;
 }
 
-/* ===== RESPONSIVE ===== */
-@media(min-width:768px) {
-  .container { grid-template-columns: repeat(3, 1fr); }
-  .cards { grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); }
-  }
+/* GOOGLE BUTTON */
+.google-btn {
+  width: 100%;
+  padding: 16px;
+  font-size: 17px;
+  border-radius: 10px;
+  border: none;
+  background: #4285f4;
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.google-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(66,133,244,0.4);
+}
