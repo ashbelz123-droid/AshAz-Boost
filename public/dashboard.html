@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>AshMediaBoost – Premium Dashboard</title>
+  <title>AshMediaBoost | Dashboard</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 
@@ -14,16 +15,25 @@
 
 <div class="main">
 
+  <!-- PLATFORM ICONS -->
+  <div class="platforms">
+    <div class="platform ig"><i class="fa-brands fa-instagram"></i> Instagram</div>
+    <div class="platform tt"><i class="fa-brands fa-tiktok"></i> TikTok</div>
+    <div class="platform yt"><i class="fa-brands fa-youtube"></i> YouTube</div>
+    <div class="platform fb"><i class="fa-brands fa-facebook"></i> Facebook</div>
+    <div class="platform x"><i class="fa-brands fa-x-twitter"></i> X</div>
+    <div class="platform tg"><i class="fa-brands fa-telegram"></i> Telegram</div>
+  </div>
+
   <!-- WALLET CARD -->
   <div class="card wallet-card">
     <h3>Wallet Balance</h3>
     <div id="wallet" class="wallet-amount">UGX 0</div>
-
     <input id="deposit" type="number" placeholder="Enter amount (UGX)">
     <button class="btn mtn" onclick="deposit()">Deposit MTN / Airtel</button>
   </div>
 
-  <!-- SEARCH -->
+  <!-- SEARCH CARD -->
   <div class="card">
     <input
       id="serviceSearch"
@@ -32,14 +42,7 @@
       onkeyup="filterServices()"
     />
   </div>
-<div class="platforms">
-  <div class="platform ig"><i class="fa-brands fa-instagram"></i> Instagram</div>
-  <div class="platform tt"><i class="fa-brands fa-tiktok"></i> TikTok</div>
-  <div class="platform yt"><i class="fa-brands fa-youtube"></i> YouTube</div>
-  <div class="platform fb"><i class="fa-brands fa-facebook"></i> Facebook</div>
-  <div class="platform x"><i class="fa-brands fa-x-twitter"></i> X</div>
-  <div class="platform tg"><i class="fa-brands fa-telegram"></i> Telegram</div>
-</div>
+
   <!-- ORDER CARD -->
   <div class="card order-card">
     <h3>Create Order</h3>
