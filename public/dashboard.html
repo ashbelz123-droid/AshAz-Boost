@@ -25,15 +25,11 @@
     <h3>📦 Place Order</h3>
 
     <select id="service" onchange="updateDesc()">
-      <option value="">Select Service</option>
-      <option value="Instagram Followers">📸 Instagram Followers</option>
-      <option value="Telegram Members">📢 Telegram Members</option>
-      <option value="TikTok Views">🎵 TikTok Views</option>
-      <option value="YouTube Subs">▶️ YouTube Subscribers</option>
+      <option value="">Loading services...</option>
     </select>
 
     <div id="desc" class="desc">Select service to see description</div>
-
+    <input type="text" id="url" placeholder="Enter URL">
     <input type="number" id="quantity" placeholder="Quantity">
     <p>Price: <span id="price">0</span> UGX</p>
     <button onclick="order()">Place Order</button>
@@ -48,4 +44,4 @@
 
 <script src="script.js"></script>
 </body>
-  </html>
+                          </html>
