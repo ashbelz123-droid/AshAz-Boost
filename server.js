@@ -1,118 +1,46 @@
-const services = {
-  Instagram: [
-    {
-      id: 1,
-      name: "Instagram Followers - Cheapest Market",
-      rate: 0.00028,
-      min: 100,
-      max: 1000000,
-      desc: "⚡ Instant start | 🔒 No password | 👤 Mixed quality | ❌ No refill"
-    },
-    {
-      id: 2,
-      name: "Instagram Likes - Real & Fast",
-      rate: 0.00018,
-      min: 50,
-      max: 500000,
-      desc: "❤️ Fast delivery | 🤖 Mixed accounts | ❌ No refill"
-    },
-    {
-      id: 3,
-      name: "Instagram Views - HQ",
-      rate: 0.00005,
-      min: 1000,
-      max: 5000000,
-      desc: "👁️ High retention | ⚡ Super fast | ✅ Safe"
-    }
-  ],
+const express = require("express");
+const path = require("path");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const axios = require("axios");
 
-  Telegram: [
-    {
-      id: 4,
-      name: "Telegram Members [ Max 10M ]",
-      rate: 0.00012,
-      min: 1000,
-      max: 10000000,
-      desc: "🚀 Instant start | ❌ No refill | ⚠️ Cancel enabled"
-    },
-    {
-      id: 5,
-      name: "Telegram Post Views",
-      rate: 0.00003,
-      min: 100,
-      max: 10000000,
-      desc: "👁️ Realistic views | ⚡ Fast"
-    }
-  ],
+const app = express();
 
-  YouTube: [
-    {
-      id: 6,
-      name: "YouTube Subscribers",
-      rate: 0.0009,
-      min: 100,
-      max: 500000,
-      desc: "📺 Stable growth | ⚠️ Drop possible | ❌ No refill"
-    },
-    {
-      id: 7,
-      name: "YouTube Views",
-      rate: 0.00004,
-      min: 1000,
-      max: 10000000,
-      desc: "👁️ High retention | 🔥 Trending boost"
-    }
-  ],
+// 🔥 REQUIRED FOR RENDER
+const PORT = process.env.PORT || 10000;
 
-  TikTok: [
-    {
-      id: 8,
-      name: "TikTok Followers",
-      rate: 0.00035,
-      min: 100,
-      max: 1000000,
-      desc: "🎵 Fast start | 🤖 Mixed users"
-    },
-    {
-      id: 9,
-      name: "TikTok Likes",
-      rate: 0.0002,
-      min: 50,
-      max: 500000,
-      desc: "❤️ Realistic likes | ⚡ Fast"
-    }
-  ],
+// MIDDLEWARES
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-  Facebook: [
-    {
-      id: 10,
-      name: "Facebook Page Likes",
-      rate: 0.0004,
-      min: 100,
-      max: 1000000,
-      desc: "👍 Page growth | ⚠️ No refill"
-    }
-  ],
+// STATIC FILES
+app.use(express.static(path.join(__dirname, "public")));
 
-  Twitter: [
-    {
-      id: 11,
-      name: "Twitter (X) Followers",
-      rate: 0.0005,
-      min: 100,
-      max: 500000,
-      desc: "🐦 Fast delivery | 👤 Mixed quality"
-    }
-  ],
+// ROUTES
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
 
-  LinkedIn: [
-    {
-      id: 12,
-      name: "LinkedIn Followers",
-      rate: 0.0012,
-      min: 50,
-      max: 100000,
-      desc: "💼 Professional profiles | ⚠️ Slow start"
-    }
-  ]
-};
+app.get("/login", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "login.html"));
+});
+
+app.get("/dashboard", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "dashboard.html"));
+});
+
+// HEALTH CHECK (VERY IMPORTANT)
+app.get("/health", (req, res) => {
+  res.status(200).send("OK");
+});
+
+// TEST API ENDPOINT (PREVENT EARLY EXIT)
+app.get("/api/test", (req, res) => {
+  res.json({ status: "API working" });
+});
+
+// START SERVER
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`✅ Server running on port ${PORT}`);
+});
