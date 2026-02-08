@@ -8,7 +8,7 @@
 <body>
 
 <div class="login-container">
-  <h2>Login</h2>
+  <h2>AshMediaBoost Login</h2>
   <input id="email" type="email" placeholder="Email">
   <input id="password" type="password" placeholder="Password">
   <button class="btn login-btn" onclick="login()">Login</button>
@@ -19,20 +19,16 @@
 async function login(){
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
-
   if(!email || !password){
     document.getElementById("loginMsg").innerText = "Fill all fields!";
     return;
   }
-
-  // Simple auth (replace with real DB)
-  const res = await fetch("/api/login", {
+  const res = await fetch("/api/login",{
     method:"POST",
     headers:{"Content-Type":"application/json"},
     body: JSON.stringify({email,password})
   });
   const data = await res.json();
-
   if(data.success){
     localStorage.setItem("userEmail", email);
     window.location.href = "/dashboard";
@@ -41,5 +37,6 @@ async function login(){
   }
 }
 </script>
+
 </body>
 </html>
