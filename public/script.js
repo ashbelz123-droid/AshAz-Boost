@@ -1,69 +1,25 @@
-const services = {
-  instagram: [
-    {
-      name: "Instagram Followers - Cheapest Market",
-      price: 20,
-      desc: "⚠️ High quality | Mixed accounts | No refill | Instant start"
-    }
-  ],
-  telegram: [
-    {
-      name: "Telegram Members [Max 10M]",
-      price: 15,
-      desc: "⚠️ High quality | Cancel enabled | No refill"
-    }
-  ],
-  tiktok: [
-    {
-      name: "TikTok Likes",
-      price: 18,
-      desc: "✅ Real users | Safe | Fast delivery"
-    }
-  ],
-  youtube: [
-    {
-      name: "YouTube Views",
-      price: 10,
-      desc: "✅ Non-drop | Monetization friendly"
-    }
-  ]
-};
+let balance = 0;
 
-let selected = null;
+function deposit() {
+  const amount = Number(document.getElementById("amount").value);
 
-function loadServices() {
-  const cat = document.getElementById("category").value;
-  const service = document.getElementById("service");
-  service.innerHTML = `<option value="">Select Service</option>`;
-
-  if (!services[cat]) return;
-
-  services[cat].forEach((s, i) => {
-    service.innerHTML += `<option value="${i}">${s.name}</option>`;
-  });
-}
-
-function selectService() {
-  const cat = document.getElementById("category").value;
-  const idx = document.getElementById("service").value;
-
-  if (idx === "") return;
-
-  selected = services[cat][idx];
-  document.getElementById("description").innerText = selected.desc;
-  calculatePrice();
-}
-
-function calculatePrice() {
-  if (!selected) return;
-  const qty = document.getElementById("quantity").value || 0;
-  document.getElementById("price").value = qty * selected.price;
-}
-
-function placeOrder() {
-  if (!selected) {
-    alert("Select service first");
+  if (amount < 500) {
+    alert("Minimum deposit is 500 UGX");
     return;
   }
-  alert("Order placed (demo). API will be connected next.");
+
+  balance += amount;
+  document.getElementById("balance").innerText = "UGX " + balance;
+  alert("Deposit successful");
+}
+
+function order() {
+  const qty = Number(document.getElementById("qty").value);
+
+  if (!qty || qty <= 0) {
+    alert("Enter quantity");
+    return;
+  }
+
+  alert("Order placed (API coming next)");
 }
