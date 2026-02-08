@@ -107,3 +107,63 @@ input:focus, select:focus {
   margin-bottom: 15px;
   text-align: center;
   }
+/* AUTH PAGE */
+.auth-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+}
+
+.login-box {
+  width: 100%;
+  max-width: 420px;
+  background: rgba(255,255,255,0.12);
+  padding: 40px;
+  border-radius: 24px;
+  text-align: center;
+  backdrop-filter: blur(15px);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+}
+
+.login-box h2 {
+  font-size: 26px;
+  margin-bottom: 10px;
+}
+
+.login-box p {
+  font-size: 14px;
+  opacity: 0.8;
+  margin-bottom: 25px;
+}
+
+.login-box input {
+  width: 100%;
+  padding: 16px;
+  border-radius: 14px;
+  border: none;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+.login-btn {
+  background: linear-gradient(45deg, #00e676, #00c853);
+  color: #000;
+  margin-bottom: 15px;
+}
+
+.google-btn {
+  background: #fff;
+  color: #000;
+}
+
+.google-btn i {
+  margin-right: 8px;
+}
+
+.divider {
+  margin: 15px 0;
+  font-size: 13px;
+  opacity: 0.6;
+  }
