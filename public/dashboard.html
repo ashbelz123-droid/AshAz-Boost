@@ -15,14 +15,15 @@
 
 <div class="main">
 
-  <!-- PLATFORM ICONS -->
-  <div class="platforms">
-    <div class="platform ig"><i class="fa-brands fa-instagram"></i> Instagram</div>
-    <div class="platform tt"><i class="fa-brands fa-tiktok"></i> TikTok</div>
-    <div class="platform yt"><i class="fa-brands fa-youtube"></i> YouTube</div>
-    <div class="platform fb"><i class="fa-brands fa-facebook"></i> Facebook</div>
-    <div class="platform x"><i class="fa-brands fa-x-twitter"></i> X</div>
-    <div class="platform tg"><i class="fa-brands fa-telegram"></i> Telegram</div>
+  <!-- PLATFORM FILTER -->
+  <div class="platform-filter">
+    <button class="platform-btn active" onclick="filterByPlatform('All')">All</button>
+    <button class="platform-btn" onclick="filterByPlatform('Instagram')"><i class="fa-brands fa-instagram"></i> Instagram</button>
+    <button class="platform-btn" onclick="filterByPlatform('TikTok')"><i class="fa-brands fa-tiktok"></i> TikTok</button>
+    <button class="platform-btn" onclick="filterByPlatform('YouTube')"><i class="fa-brands fa-youtube"></i> YouTube</button>
+    <button class="platform-btn" onclick="filterByPlatform('Facebook')"><i class="fa-brands fa-facebook"></i> Facebook</button>
+    <button class="platform-btn" onclick="filterByPlatform('X')"><i class="fa-brands fa-x-twitter"></i> X</button>
+    <button class="platform-btn" onclick="filterByPlatform('Telegram')"><i class="fa-brands fa-telegram"></i> Telegram</button>
   </div>
 
   <!-- WALLET CARD -->
@@ -33,7 +34,7 @@
     <button class="btn mtn" onclick="deposit()">Deposit MTN / Airtel</button>
   </div>
 
-  <!-- SEARCH CARD -->
+  <!-- SEARCH -->
   <div class="card">
     <input
       id="serviceSearch"
@@ -55,8 +56,7 @@
     <input id="qty" type="number" placeholder="Quantity">
 
     <div class="price-box">
-      Total Price:
-      <span id="price">0</span> UGX
+      Total Price: <span id="price">0</span> UGX
     </div>
 
     <button class="btn order-btn" onclick="placeOrder()">Place Order</button>
@@ -85,4 +85,4 @@
 
 <script src="script.js"></script>
 </body>
-      </html>
+</html>
