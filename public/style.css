@@ -167,3 +167,33 @@ input:focus, select:focus {
   font-size: 13px;
   opacity: 0.6;
   }
+.platforms {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.platform {
+  padding: 20px;
+  border-radius: 18px;
+  font-size: 18px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+}
+
+.platform i {
+  font-size: 24px;
+}
+
+/* COLORS */
+.ig { background: linear-gradient(45deg,#f58529,#dd2a7b,#8134af); }
+.tt { background: #000; }
+.yt { background: #ff0000; }
+.fb { background: #1877f2; }
+.x  { background: #000; }
+.tg { background: #229ed9; }
