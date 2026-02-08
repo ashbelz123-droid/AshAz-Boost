@@ -3,41 +3,49 @@
 <head>
   <title>Dashboard</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
 
-<h2>👤 Welcome</h2>
+<header>
+  <h2>👤 Welcome, User</h2>
+</header>
 
-<div class="card">
-  <h3>💰 Wallet Balance</h3>
-  <p id="balance">UGX 0</p>
-</div>
+<div class="container">
 
-<div class="card">
-  <h3>➕ Add Funds</h3>
-  <input type="number" id="amount" placeholder="Min 500 UGX">
-  <button class="mtn" onclick="deposit()">MTN Mobile Money</button>
-  <button class="airtel" onclick="deposit()">Airtel Money</button>
-  <p>Minimum deposit: <b>500 UGX</b></p>
-</div>
+  <div class="card">
+    <h3>💰 Wallet Balance</h3>
+    <p id="wallet">UGX 0</p>
+    <input type="number" id="amount" placeholder="Min 500 UGX">
+    <button class="mtn" onclick="deposit()">MTN Deposit</button>
+    <button class="airtel" onclick="deposit()">Airtel Deposit</button>
+  </div>
 
-<div class="card">
-  <h3>📦 Place Order</h3>
+  <div class="card">
+    <h3>📦 Place Order</h3>
 
-  <select id="service">
-    <option>Instagram Followers</option>
-    <option>Instagram Likes</option>
-    <option>Telegram Members</option>
-    <option>TikTok Views</option>
-    <option>YouTube Subscribers</option>
-  </select>
+    <select id="service" onchange="updateDesc()">
+      <option value="">Select Service</option>
+      <option value="Instagram Followers">📸 Instagram Followers</option>
+      <option value="Telegram Members">📢 Telegram Members</option>
+      <option value="TikTok Views">🎵 TikTok Views</option>
+      <option value="YouTube Subs">▶️ YouTube Subscribers</option>
+    </select>
 
-  <input type="text" id="url" placeholder="Enter link">
-  <input type="number" id="qty" placeholder="Quantity">
+    <div id="desc" class="desc">Select service to see description</div>
 
-  <button onclick="order()">Place Order</button>
+    <input type="number" id="quantity" placeholder="Quantity">
+    <p>Price: <span id="price">0</span> UGX</p>
+    <button onclick="order()">Place Order</button>
+  </div>
+
+  <div class="card">
+    <h3>📝 Orders</h3>
+    <ul id="orders"></ul>
+  </div>
+
 </div>
 
 <script src="script.js"></script>
 </body>
-</html>
+  </html>
