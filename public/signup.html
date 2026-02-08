@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>AshMediaBoost | Sign Up</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign Up | AshMediaBoost</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -17,13 +18,24 @@
 
 <script>
 async function signup(){
-  const email=document.getElementById("email").value;
-  const password=document.getElementById("password").value;
-  if(!email||!password){document.getElementById("signupMsg").innerText="Fill all fields"; return;}
-  const res=await fetch("/api/signup",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email,password})});
-  const data=await res.json();
-  if(data.success){alert("Account created!"); window.location.href="/login";}
-  else{document.getElementById("signupMsg").innerText=data.error;}
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  if(!email || !password){ 
+    document.getElementById("signupMsg").innerText="Fill all fields"; 
+    return;
+  }
+  const res = await fetch("/api/signup",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({email,password})
+  });
+  const data = await res.json();
+  if(data.success){
+    alert("Account created! Login now.");
+    window.location.href="/login";
+  } else {
+    document.getElementById("signupMsg").innerText = data.error;
+  }
 }
 </script>
 </body>
