@@ -3,7 +3,7 @@ const services = {
     {
       name: "Instagram Followers - Cheapest Market",
       price: 20,
-      desc: "⚠️ High quality | No refill | Instant start | Mixed accounts"
+      desc: "⚠️ High quality | Mixed accounts | No refill | Instant start"
     }
   ],
   telegram: [
@@ -17,45 +17,53 @@ const services = {
     {
       name: "TikTok Likes",
       price: 18,
-      desc: "✅ Real users | Fast delivery"
+      desc: "✅ Real users | Safe | Fast delivery"
     }
   ],
   youtube: [
     {
       name: "YouTube Views",
       price: 10,
-      desc: "✅ Safe | Non-drop"
+      desc: "✅ Non-drop | Monetization friendly"
     }
   ]
 };
 
-let selectedService = null;
+let selected = null;
 
 function loadServices() {
-  const category = document.getElementById("category").value;
-  const serviceSelect = document.getElementById("service");
-  serviceSelect.innerHTML = `<option value="">Select Service</option>`;
+  const cat = document.getElementById("category").value;
+  const service = document.getElementById("service");
+  service.innerHTML = `<option value="">Select Service</option>`;
 
-  if (!services[category]) return;
+  if (!services[cat]) return;
 
-  services[category].forEach((s, i) => {
-    serviceSelect.innerHTML += `<option value="${i}">${s.name}</option>`;
+  services[cat].forEach((s, i) => {
+    service.innerHTML += `<option value="${i}">${s.name}</option>`;
   });
 }
 
-function updateService() {
+function selectService() {
   const cat = document.getElementById("category").value;
-  const index = document.getElementById("service").value;
+  const idx = document.getElementById("service").value;
 
-  if (index === "") return;
+  if (idx === "") return;
 
-  selectedService = services[cat][index];
-  document.getElementById("serviceDesc").innerText = selectedService.desc;
-  calcPrice();
+  selected = services[cat][idx];
+  document.getElementById("description").innerText = selected.desc;
+  calculatePrice();
 }
 
-function calcPrice() {
-  if (!selectedService) return;
-  const qty = document.getElementById("quantity").value;
-  document.getElementById("price").value = qty * selectedService.price;
+function calculatePrice() {
+  if (!selected) return;
+  const qty = document.getElementById("quantity").value || 0;
+  document.getElementById("price").value = qty * selected.price;
+}
+
+function placeOrder() {
+  if (!selected) {
+    alert("Select service first");
+    return;
+  }
+  alert("Order placed (demo). API will be connected next.");
 }
