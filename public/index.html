@@ -1,41 +1,40 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AshMediaBoost</title>
+  <title>AshAzBoost</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h2>👤 Welcome</h2>
-<div class="card">
-  <h3>Wallet Balance</h3>
-  <h1 id="wallet">UGX 0</h1>
+<div class="header">
+  <h2>👤 Welcome, User</h2>
 </div>
 
-<div class="card mtn">
-  <button onclick="deposit(2000)">MTN Deposit</button>
-</div>
+<div class="container grid">
+  <div class="card">
+    <h3>Wallet Balance</h3>
+    <h1 id="wallet">UGX 0</h1>
+  </div>
 
-<div class="card airtel">
-  <button onclick="deposit(2000)">Airtel Deposit</button>
-</div>
+  <div class="card mtn">
+    <button onclick="deposit(2000, 'MTN')">Deposit with MTN</button>
+  </div>
 
-<div class="card">
-  <h3>📦 Place Order</h3>
+  <div class="card airtel">
+    <button onclick="deposit(2000, 'AIRTEL')">Deposit with Airtel</button>
+  </div>
 
-  <select id="service">
-    <option value="1">Instagram Followers – Cheapest Market</option>
-    <option value="2">Telegram Members – HQ – No Refill</option>
-  </select>
+  <div class="card">
+    <h3>📦 Place Order</h3>
 
-  <div id="desc"></div>
+    <select id="serviceSelect"></select>
+    <div class="description" id="desc"></div>
 
-  <input id="link" placeholder="Enter URL">
-  <input id="qty" type="number" placeholder="Quantity">
-
-  <h4>Total: UGX <span id="price">0</span></h4>
-
-  <button onclick="order()">Place Order</button>
+    <input id="link" placeholder="Enter URL">
+    <input id="qty" type="number" placeholder="Quantity">
+    <h4>Total: UGX <span id="price">0</span></h4>
+    <button class="primary" onclick="order()">Place Order</button>
+  </div>
 </div>
 
 <script src="script.js"></script>
