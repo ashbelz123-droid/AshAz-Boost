@@ -1,91 +1,64 @@
-body {
-  font-family: Arial, sans-serif;
-  background: #0f172a;
-  color: #e5e7eb;
-  margin: 0;
-  padding: 12px;
-}
-
-.header {
-  background: linear-gradient(135deg, #2563eb, #1e40af);
-  padding: 16px;
-  border-radius: 12px;
-  text-align: center;
-  color: #fff;
-}
-
-.grid-container {
+.stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px,1fr));
-  gap: 16px;
-  max-width: 1400px;
-  margin: 20px auto;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
 }
 
-.card {
-  background: #020617;
+.stat-card {
+  background: #eaffea;
+  padding: 15px;
   border-radius: 14px;
-  padding: 16px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-}
-
-input, select {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 8px;
-  border-radius: 10px;
-  border: none;
-  background: #020617;
-  color: #fff;
-  outline: 1px solid #1e293b;
-}
-button {
-  width: 100%;
-  padding: 12px;
-  border-radius: 10px;
-  border: none;
-  font-weight: bold;
-  cursor: pointer;
-  margin-bottom: 6px;
-}
-button.mtn { background: #ffcc00; color: #000; }
-button.airtel { background: #e60000; color: #fff; }
-button.primary { background: #2563eb; color: #fff; }
-
-.description {
-  background: #020617;
-  padding: 10px;
-  border-radius: 10px;
-  font-size: 0.9rem;
-  margin: 6px 0;
-  color: #cbd5f5;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-}
-th, td {
-  border: 1px solid #1e293b;
-  padding: 8px;
   text-align: center;
-}
-th {
-  background: #2563eb;
-  color: #fff;
-}
-td {
-  background: #020617;
-  color: #cbd5f5;
-  font-size: 0.9rem;
+  font-weight: bold;
 }
 
-.chart-card {
+.section-title {
+  margin: 20px 0 10px;
+}
+
+.platforms {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.platform-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  font-weight: 600;
+}
+
+.platform-card i {
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+
+/* COLORS */
+.instagram { color: #E1306C; }
+.tiktok { color: #000; }
+.telegram { color: #0088cc; }
+.youtube { color: #FF0000; }
+.facebook { color: #1877f2; }
+
+.new-order-btn {
+  display: block;
+  margin: 25px 0;
+  background: #7ac943;
+  color: white;
+  text-align: center;
   padding: 16px;
+  border-radius: 16px;
+  font-size: 18px;
+  text-decoration: none;
 }
 
-@media (max-width: 768px) {
-  .grid-container { grid-template-columns: 1fr; }
-  .header h2 { font-size: 1.3rem; }
+/* DESKTOP */
+@media (min-width: 900px) {
+  .platforms {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
