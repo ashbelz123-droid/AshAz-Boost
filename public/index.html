@@ -1,42 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>AshAzBoost</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AshAzBoost - SMM Panel</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-
 <div class="header">
-  <h2>👤 Welcome, User</h2>
+  <h1>AshAzBoost</h1>
+  <nav>
+    <a href="/">Home</a>
+    <a href="/login">Login</a>
+  </nav>
 </div>
 
-<div class="container grid">
-  <div class="card">
-    <h3>Wallet Balance</h3>
-    <h1 id="wallet">UGX 0</h1>
-  </div>
-
-  <div class="card mtn">
-    <button onclick="deposit(2000, 'MTN')">Deposit with MTN</button>
-  </div>
-
-  <div class="card airtel">
-    <button onclick="deposit(2000, 'AIRTEL')">Deposit with Airtel</button>
-  </div>
-
-  <div class="card">
-    <h3>📦 Place Order</h3>
-
-    <select id="serviceSelect"></select>
-    <div class="description" id="desc"></div>
-
-    <input id="link" placeholder="Enter URL">
-    <input id="qty" type="number" placeholder="Quantity">
-    <h4>Total: UGX <span id="price">0</span></h4>
-    <button class="primary" onclick="order()">Place Order</button>
-  </div>
+<div class="hero">
+  <h2>Boost Your Social Platforms</h2>
+  <p>Get followers, likes, views & more — instantly!</p>
 </div>
 
-<script src="script.js"></script>
+<div class="services-grid">
+  <div class="service-card">Instagram</div>
+  <div class="service-card">Twitter</div>
+  <div class="service-card">Facebook</div>
+  <div class="service-card">YouTube</div>
+  <div class="service-card">Telegram</div>
+  <div class="service-card">TikTok</div>
+  <div class="service-card">LinkedIn</div>
+</div>
+
+<footer>
+  © 2026 AshAzBoost
+</footer>
 </body>
 </html>
