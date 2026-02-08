@@ -1,40 +1,24 @@
 const email = "user@ashmediaboost.com";
 let allServices = [];
 
-// Wallet Load + Animate
-async function loadWallet() {
-  const res = await fetch(`/api/wallet/${email}`);
-  const data = await res.json();
-  const walletEl = document.getElementById("wallet");
-  const current = parseInt(walletEl.innerText.replace(/[^0-9]/g,'')) || 0;
-  const target = parseInt(data.wallet || 0);
-
-  // Animate change
-  let start = current, end = target;
-  const step = Math.max(Math.abs(end-start)/50,1);
-  const interval = setInterval(()=>{
-    if(start < end){ start += step; if(start>end) start=end; }
-    else{ start -= step; if(start<end) start=end; }
-    walletEl.innerText = "UGX " + Math.round(start).toLocaleString();
-    if(start===end) clearInterval(interval);
-  },10);
+// Load wallet
+async function loadWallet(){
+  const res=await fetch(`/api/wallet/${email}`);
+  const data=await res.json();
+  document.getElementById("wallet").innerText = "UGX "+(data.wallet || 0).toLocaleString();
 }
 
-// Load services
-async function loadServices() {
-  const res = await fetch("/api/services");
+// Load services from API
+async function loadServices(){
+  const res=await fetch("/api/services");
   allServices = await res.json();
-  populateServices(allServices);
-}
-
-function populateServices(list){
   const s = document.getElementById("service");
   s.innerHTML = "<option value=''>Select Service</option>";
-  list.forEach(x=>{
+  allServices.forEach(x=>{
     const o = document.createElement("option");
     o.value=x.id;
     o.textContent=`${x.name} (${x.category})`;
-    o.dataset.price=Math.round(x.priceUGX*1.8);
+    o.dataset.price=x.priceUGX;
     o.dataset.desc=x.desc;
     o.dataset.platform=x.platform;
     s.appendChild(o);
@@ -43,8 +27,8 @@ function populateServices(list){
 
 // Update price & description
 function updatePrice(){
-  const sel = document.getElementById("service");
-  const opt = sel.options[sel.selectedIndex];
+  const sel=document.getElementById("service");
+  const opt=sel.options[sel.selectedIndex];
   if(!opt || !opt.dataset.price) return;
   document.getElementById("price").innerText=opt.dataset.price;
   document.getElementById("desc").innerText=opt.dataset.desc;
@@ -54,7 +38,17 @@ function updatePrice(){
 function filterServices(){
   const q=document.getElementById("serviceSearch").value.toLowerCase();
   const filtered = allServices.filter(s=>(s.name+s.category).toLowerCase().includes(q));
-  populateServices(filtered);
+  const s=document.getElementById("service");
+  s.innerHTML="<option value=''>Select Service</option>";
+  filtered.forEach(x=>{
+    const o=document.createElement("option");
+    o.value=x.id;
+    o.textContent=`${x.name} (${x.category})`;
+    o.dataset.price=x.priceUGX;
+    o.dataset.desc=x.desc;
+    o.dataset.platform=x.platform;
+    s.appendChild(o);
+  });
 }
 
 // Place order
@@ -81,18 +75,13 @@ async function placeOrder(){
 async function deposit(){
   const amount=parseInt(document.getElementById("deposit").value);
   if(!amount || amount<500) return alert("Minimum deposit: 500 UGX");
-
-  const res=await fetch("/api/deposit",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({email,amount})
-  });
+  const res=await fetch("/api/deposit",{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({email,amount}) });
   const data=await res.json();
   alert("Deposit successful");
   loadWallet();
 }
 
-// Load Orders + Color Status + Platform Badge
+// Load orders
 async function loadOrders(){
   const res=await fetch(`/api/orders/${email}`);
   const data=await res.json();
@@ -101,14 +90,6 @@ async function loadOrders(){
 
   data.forEach(o=>{
     const tr=document.createElement("tr");
-
-    const statusClass={
-      "Pending":"status-pending",
-      "Completed":"status-completed",
-      "Canceled":"status-canceled",
-      "Partial":"status-partial"
-    }[o.status]||"";
-
     const platformIcon={
       "Instagram":"<i class='fa-brands fa-instagram'></i>",
       "TikTok":"<i class='fa-brands fa-tiktok'></i>",
@@ -117,6 +98,12 @@ async function loadOrders(){
       "X":"<i class='fa-brands fa-x-twitter'></i>",
       "Telegram":"<i class='fa-brands fa-telegram'></i>"
     }[o.platform]||"";
+    const statusClass={
+      "Pending":"status-pending",
+      "Completed":"status-completed",
+      "Canceled":"status-canceled",
+      "Partial":"status-partial"
+    }[o.status]||"";
 
     tr.innerHTML=`
       <td>${o.id}</td>
@@ -128,13 +115,19 @@ async function loadOrders(){
       <td class="status ${statusClass}">${o.status}</td>
     `;
     tbody.appendChild(tr);
+
+    // Auto-refund canceled orders
+    if(o.status=="Canceled" && o.price>0){
+      fetch("/api/deposit",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email,amount:o.price})});
+      o.price=0; // mark refunded
+    }
   });
 }
 
-// Auto-refresh orders every 15s
+// Auto refresh orders
 setInterval(loadOrders,15000);
 
-// Initial load
+// Init
 loadWallet();
 loadServices();
 loadOrders();
