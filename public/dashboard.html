@@ -1,56 +1,55 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>User Dashboard</title>
+  <meta charset="UTF-8">
+  <title>AshMediaBoost – Premium Dashboard</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header class="topbar">
-  <h2>Dashboard</h2>
+<header class="header">
+  <div class="logo">AshMediaBoost</div>
+  <div class="user">Premium User</div>
 </header>
 
-<div class="container">
+<div class="main">
 
-  <!-- WALLET -->
-  <div class="card">
+  <!-- WALLET CARD -->
+  <div class="card wallet-card">
     <h3>Wallet Balance</h3>
-    <p id="wallet">UGX 0</p>
+    <div id="wallet" class="wallet-amount">UGX 0</div>
 
-    <input id="deposit" type="number" placeholder="Min 500 UGX">
-
-    <div class="pay-btns">
-      <button class="mtn" onclick="deposit()">MTN</button>
-      <button class="airtel" onclick="deposit()">Airtel</button>
-    </div>
+    <input id="deposit" type="number" placeholder="Enter amount (UGX)">
+    <button class="btn mtn" onclick="deposit()">Deposit MTN / Airtel</button>
   </div>
 
   <!-- SEARCH -->
   <div class="card">
     <input
-      type="text"
       id="serviceSearch"
-      placeholder="🔍 Search services (Instagram, Telegram, Likes...)"
+      type="text"
+      placeholder="🔍 Search services..."
       onkeyup="filterServices()"
     />
   </div>
 
-  <!-- ORDER -->
-  <div class="card">
-    <h3>Place Order</h3>
+  <!-- ORDER CARD -->
+  <div class="card order-card">
+    <h3>Create Order</h3>
 
-    <select id="service"></select>
+    <select id="service" onchange="updatePrice()"></select>
 
-    <div id="desc" class="desc"></div>
+    <div id="desc" class="service-desc">Select a service</div>
 
-    <input id="link" placeholder="Enter link">
+    <input id="link" placeholder="Post / Profile Link">
     <input id="qty" type="number" placeholder="Quantity">
 
-    <p class="price">
-      Price: <span id="price">0</span> UGX
-    </p>
+    <div class="price-box">
+      Total Price:
+      <span id="price">0</span> UGX
+    </div>
 
-    <button class="order-btn" onclick="order()">Place Order</button>
+    <button class="btn order-btn" onclick="placeOrder()">Place Order</button>
   </div>
 
 </div>
