@@ -31,6 +31,16 @@ app.post("/api/login", (req, res) => {
 });
 
 // --------------------
+// SIGNUP ENDPOINT
+// --------------------
+app.post("/api/signup", (req,res) => {
+  const { email, password } = req.body;
+  if(users[email]) return res.json({ error:"Email already exists" });
+  users[email] = { password, wallet:0, orders:[] };
+  res.json({ success:true });
+});
+
+// --------------------
 // GODSMM CONFIG
 // --------------------
 const GODSMM_KEY = "YOUR_GODSMM_API_KEY"; // Replace with your key
@@ -56,18 +66,16 @@ app.get("/api/services", async (req, res) => {
       key: GODSMM_KEY,
       action: "services"
     });
-    const services = response.data.map(s => {
-      return {
-        id: s.service || s.services,
-        name: s.name,
-        category: s.Category,
-        priceUGX: s.rate * 1.8 * 500, // 1.8x profit, 500UGX base
-        min: s.min,
-        max: s.max,
-        desc: `${s.type} | Min:${s.min} Max:${s.max}`,
-        platform: s.Category
-      };
-    });
+    const services = response.data.map(s => ({
+      id: s.service || s.services,
+      name: s.name,
+      category: s.Category,
+      priceUGX: s.rate * 1.8 * 500, // 1.8x profit, base 500 UGX
+      min: s.min,
+      max: s.max,
+      desc: `${s.type} | Min:${s.min} Max:${s.max}`,
+      platform: s.Category
+    }));
     res.json(services);
   }catch(err){ res.json([]); }
 });
@@ -82,9 +90,9 @@ app.post("/api/order", async (req,res) => {
     const response = await axios.post("https://godsmm.com/api/v2", {
       key: GODSMM_KEY,
       action: "add",
-      service: service,
-      link: link,
-      quantity: quantity
+      service,
+      link,
+      quantity
     });
 
     users[email].wallet -= price;
@@ -115,11 +123,10 @@ app.get("/api/orders/:email", (req,res) => {
 // --------------------
 app.get("/", (req,res) => res.sendFile(path.join(__dirname, "public", "login.html")));
 app.get("/login", (req,res) => res.sendFile(path.join(__dirname, "public", "login.html")));
+app.get("/signup", (req,res) => res.sendFile(path.join(__dirname, "public", "signup.html")));
 app.get("/dashboard", (req,res) => res.sendFile(path.join(__dirname, "public", "dashboard.html")));
 
 // Health check
 app.get("/health", (req,res) => res.send("OK"));
 
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`✅ Server running on port ${PORT}`);
-});
+app.listen(PORT, "0.0.0.0", () => console.log(`✅ Server running on port ${PORT}`));
