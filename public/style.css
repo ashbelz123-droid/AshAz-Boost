@@ -1,113 +1,4 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Segoe UI", sans-serif;
-}
-
-body {
-  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-  min-height: 100vh;
-  color: #fff;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 40px;
-  background: rgba(0,0,0,0.4);
-  backdrop-filter: blur(10px);
-}
-
-.logo {
-  font-size: 22px;
-  font-weight: bold;
-}
-
-.user {
-  font-size: 14px;
-  opacity: 0.8;
-}
-
-.main {
-  max-width: 1100px;
-  margin: auto;
-  padding: 30px;
-}
-
-.card {
-  background: rgba(255,255,255,0.1);
-  border-radius: 20px;
-  padding: 30px;
-  margin-bottom: 25px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-  backdrop-filter: blur(12px);
-}
-
-.wallet-card {
-  text-align: center;
-}
-
-.wallet-amount {
-  font-size: 36px;
-  font-weight: bold;
-  margin: 20px 0;
-}
-
-input, select {
-  width: 100%;
-  padding: 16px;
-  border-radius: 14px;
-  border: none;
-  margin-bottom: 15px;
-  font-size: 16px;
-}
-
-input:focus, select:focus {
-  outline: none;
-}
-
-.btn {
-  width: 100%;
-  padding: 16px;
-  border-radius: 14px;
-  border: none;
-  font-size: 17px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.btn:hover {
-  transform: translateY(-2px);
-  opacity: 0.9;
-}
-
-.mtn {
-  background: linear-gradient(45deg, #ffcc00, #ffb300);
-  color: #000;
-}
-
-.order-btn {
-  background: linear-gradient(45deg, #00c853, #00e676);
-  color: #000;
-}
-
-.service-desc {
-  background: rgba(0,0,0,0.3);
-  padding: 15px;
-  border-radius: 12px;
-  margin-bottom: 15px;
-  font-size: 14px;
-}
-
-.price-box {
-  font-size: 20px;
-  font-weight: bold;
-  margin-bottom: 15px;
-  text-align: center;
-  }
-/* AUTH PAGE */
+/* ===== LOGIN PAGE ===== */
 .auth-body {
   display: flex;
   align-items: center;
@@ -147,6 +38,21 @@ input:focus, select:focus {
   font-size: 16px;
 }
 
+.btn {
+  width: 100%;
+  padding: 16px;
+  border-radius: 14px;
+  border: none;
+  font-size: 17px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
 .login-btn {
   background: linear-gradient(45deg, #00e676, #00c853);
   color: #000;
@@ -166,7 +72,9 @@ input:focus, select:focus {
   margin: 15px 0;
   font-size: 13px;
   opacity: 0.6;
-  }
+}
+
+/* ===== PLATFORM ICONS ===== */
 .platforms {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -190,10 +98,9 @@ input:focus, select:focus {
   font-size: 24px;
 }
 
-/* COLORS */
 .ig { background: linear-gradient(45deg,#f58529,#dd2a7b,#8134af); }
-.tt { background: #000; }
-.yt { background: #ff0000; }
-.fb { background: #1877f2; }
-.x  { background: #000; }
-.tg { background: #229ed9; }
+.tt { background: #000; color:#fff; }
+.yt { background: #ff0000; color:#fff; }
+.fb { background: #1877f2; color:#fff; }
+.x  { background: #000; color:#fff; }
+.tg { background: #229ed9; color:#fff; }
