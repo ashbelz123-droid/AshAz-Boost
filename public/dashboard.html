@@ -9,10 +9,10 @@
 <body>
 
 <div class="header">
-  <h2>👤 Dashboard</h2>
+  <h2>👤 Welcome, User</h2>
 </div>
 
-<div class="container grid">
+<div class="grid-container">
 
   <!-- WALLET -->
   <div class="card wallet">
@@ -72,8 +72,15 @@
     </table>
   </div>
 
+  <!-- ANALYTICS CHART -->
+  <div class="card chart-card">
+    <h3>📊 Analytics</h3>
+    <canvas id="analyticsChart" height="200"></canvas>
+  </div>
+
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="script.js"></script>
 </body>
-  </html>
+</html>
