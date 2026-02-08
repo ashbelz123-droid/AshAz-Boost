@@ -1,7 +1,7 @@
-let email = "user@test.com";
-let services = [];
+const email = "user@ashmediaboost.com";
+let allServices = [];
 
-/* LOGIN AUTO */
+/* AUTO LOGIN */
 fetch("/api/login", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
@@ -10,86 +10,94 @@ fetch("/api/login", {
 
 /* LOAD WALLET */
 async function loadWallet() {
-  const r = await fetch(`/api/wallet/${email}`);
-  const d = await r.json();
+  const res = await fetch(`/api/wallet/${email}`);
+  const data = await res.json();
   document.getElementById("wallet").innerText =
-    "UGX " + d.wallet.toLocaleString();
+    "UGX " + data.wallet.toLocaleString();
 }
 
 /* LOAD SERVICES */
 async function loadServices() {
-  const r = await fetch("/api/services");
-  services = await r.json();
-  renderServices(services);
+  const res = await fetch("/api/services");
+  allServices = await res.json();
+  populateServices(allServices);
 }
 
-function renderServices(list) {
-  const sel = document.getElementById("service");
-  sel.innerHTML = "";
+function populateServices(list) {
+  const s = document.getElementById("service");
+  s.innerHTML = "<option value=''>Select Service</option>";
 
-  list.forEach(s => {
-    const opt = document.createElement("option");
-    opt.value = s.id;
-    opt.text = `${s.name} (${s.category})`;
-    opt.dataset.price = s.priceUGX;
-    opt.dataset.desc = s.desc;
-    sel.appendChild(opt);
+  list.forEach(x => {
+    const o = document.createElement("option");
+    o.value = x.id;
+    o.textContent = `${x.name} (${x.category})`;
+    o.dataset.price = x.priceUGX;
+    o.dataset.desc = x.desc;
+    s.appendChild(o);
   });
-
-  updatePrice();
 }
 
 function updatePrice() {
-  const opt = service.selectedOptions[0];
-  if (!opt) return;
+  const sel = document.getElementById("service");
+  const opt = sel.options[sel.selectedIndex];
+  if (!opt || !opt.dataset.price) return;
+
   document.getElementById("price").innerText = opt.dataset.price;
   document.getElementById("desc").innerText = opt.dataset.desc;
 }
 
-service.onchange = updatePrice;
-
 /* SEARCH */
 function filterServices() {
-  const q = serviceSearch.value.toLowerCase();
-  const filtered = services.filter(s =>
+  const q = document.getElementById("serviceSearch").value.toLowerCase();
+  const filtered = allServices.filter(s =>
     (s.name + s.category).toLowerCase().includes(q)
   );
-  renderServices(filtered);
+  populateServices(filtered);
 }
 
 /* ORDER */
-async function order() {
-  const price = parseInt(priceEl());
+async function placeOrder() {
+  const service = document.getElementById("service").value;
+  const link = document.getElementById("link").value;
+  const quantity = document.getElementById("qty").value;
+  const price = document.getElementById("price").innerText;
+
+  if (!service || !link || !quantity) {
+    alert("Fill all fields");
+    return;
+  }
+
   await fetch("/api/order", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       email,
-      service: service.value,
-      link: link.value,
-      quantity: qty.value,
+      service,
+      link,
+      quantity,
       price
     })
   });
-  alert("Order placed");
-  loadWallet();
-}
 
-function priceEl() {
-  return document.getElementById("price").innerText;
+  alert("Order placed successfully");
+  loadWallet();
 }
 
 /* DEPOSIT */
 async function deposit() {
-  const amt = parseInt(document.getElementById("deposit").value);
+  const amount = document.getElementById("deposit").value;
+  if (!amount) return alert("Enter amount");
+
   await fetch("/api/deposit", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, amount: amt })
+    body: JSON.stringify({ email, amount })
   });
+
+  alert("Deposit successful");
   loadWallet();
 }
 
 /* INIT */
-loadServices();
 loadWallet();
+loadServices();
