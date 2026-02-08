@@ -1,41 +1,65 @@
 let email = "user@test.com";
 let services = [];
 
-function login() {
-  fetch("/api/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email })
-  }).then(() => location.href = "/dashboard");
+/* LOGIN AUTO */
+fetch("/api/login", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ email })
+});
+
+/* LOAD WALLET */
+async function loadWallet() {
+  const r = await fetch(`/api/wallet/${email}`);
+  const d = await r.json();
+  document.getElementById("wallet").innerText =
+    "UGX " + d.wallet.toLocaleString();
 }
 
+/* LOAD SERVICES */
 async function loadServices() {
-  const res = await fetch("/api/services");
-  services = await res.json();
+  const r = await fetch("/api/services");
+  services = await r.json();
+  renderServices(services);
+}
 
+function renderServices(list) {
   const sel = document.getElementById("service");
-  services.forEach(s => {
+  sel.innerHTML = "";
+
+  list.forEach(s => {
     const opt = document.createElement("option");
     opt.value = s.id;
-    opt.text = s.name;
-    opt.dataset.price = s.rateUGX;
+    opt.text = `${s.name} (${s.category})`;
+    opt.dataset.price = s.priceUGX;
     opt.dataset.desc = s.desc;
     sel.appendChild(opt);
   });
 
-  sel.onchange = updatePrice;
   updatePrice();
 }
 
 function updatePrice() {
-  const sel = document.getElementById("service");
-  const opt = sel.selectedOptions[0];
-  document.getElementById("desc").innerText = opt.dataset.desc;
+  const opt = service.selectedOptions[0];
+  if (!opt) return;
   document.getElementById("price").innerText = opt.dataset.price;
+  document.getElementById("desc").innerText = opt.dataset.desc;
 }
 
+service.onchange = updatePrice;
+
+/* SEARCH */
+function filterServices() {
+  const q = serviceSearch.value.toLowerCase();
+  const filtered = services.filter(s =>
+    (s.name + s.category).toLowerCase().includes(q)
+  );
+  renderServices(filtered);
+}
+
+/* ORDER */
 async function order() {
-  const price = parseInt(document.getElementById("price").innerText);
+  const price = parseInt(priceEl());
   await fetch("/api/order", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -47,9 +71,15 @@ async function order() {
       price
     })
   });
-  alert("Order sent");
+  alert("Order placed");
+  loadWallet();
 }
 
+function priceEl() {
+  return document.getElementById("price").innerText;
+}
+
+/* DEPOSIT */
 async function deposit() {
   const amt = parseInt(document.getElementById("deposit").value);
   await fetch("/api/deposit", {
@@ -60,14 +90,6 @@ async function deposit() {
   loadWallet();
 }
 
-async function loadWallet() {
-  const r = await fetch(`/api/wallet/${email}`);
-  const d = await r.json();
-  document.getElementById("wallet").innerText =
-    "UGX " + d.wallet.toLocaleString();
-}
-
-if (location.pathname.includes("dashboard")) {
-  loadServices();
-  loadWallet();
-    }
+/* INIT */
+loadServices();
+loadWallet();
