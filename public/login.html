@@ -3,47 +3,42 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login - AshAzBoost</title>
+<title>Login | AshAzBoost</title>
 <link rel="stylesheet" href="style.css">
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<header>
-  <nav>
-    <a href="/">Home</a>
-    <a href="/dashboard">Dashboard</a>
-  </nav>
-</header>
+<div class="header">
+  <h2>Login to AshAzBoost</h2>
+</div>
 
-<main>
-  <h1>Login</h1>
-  <p>Enter any username to continue</p>
-
-  <div class="login-box">
-    <input type="text" id="username" placeholder="Username">
-    <button onclick="login()">Login</button>
+<div class="container">
+  <div class="card login-card">
+    <h3>Welcome Back</h3>
+    <form id="loginForm">
+      <input type="text" id="username" placeholder="Username" required>
+      <input type="password" id="password" placeholder="Password" required>
+      <button type="submit" class="primary">Login</button>
+    </form>
   </div>
-</main>
-
-<footer>
-  <p>© 2026 AshAzBoost</p>
-</footer>
+</div>
 
 <script>
-function login() {
-  const username = document.getElementById('username').value.trim();
-  if (!username) {
-    alert('Please enter a username');
-    return;
-  }
-  
-  // Save username in browser (for future steps)
-  localStorage.setItem('username', username);
+const loginForm = document.getElementById("loginForm");
+loginForm.addEventListener("submit", function(e){
+  e.preventDefault();
 
-  // Redirect to dashboard
-  window.location.href = '/dashboard';
-}
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+
+  // Dummy check for now
+  if(username && password){
+    // Redirect to dashboard
+    window.location.href = "/dashboard";
+  } else {
+    alert("Please enter username and password");
+  }
+});
 </script>
 
 </body>
