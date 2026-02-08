@@ -1,33 +1,56 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Dashboard</title>
+  <title>User Dashboard</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header>
-  <h2>User Dashboard</h2>
+<header class="topbar">
+  <h2>Dashboard</h2>
 </header>
 
 <div class="container">
 
+  <!-- WALLET -->
   <div class="card">
-    <h3>Wallet</h3>
+    <h3>Wallet Balance</h3>
     <p id="wallet">UGX 0</p>
+
     <input id="deposit" type="number" placeholder="Min 500 UGX">
-    <button class="mtn" onclick="deposit()">MTN</button>
-    <button class="airtel" onclick="deposit()">Airtel</button>
+
+    <div class="pay-btns">
+      <button class="mtn" onclick="deposit()">MTN</button>
+      <button class="airtel" onclick="deposit()">Airtel</button>
+    </div>
   </div>
 
+  <!-- SEARCH -->
+  <div class="card">
+    <input
+      type="text"
+      id="serviceSearch"
+      placeholder="🔍 Search services (Instagram, Telegram, Likes...)"
+      onkeyup="filterServices()"
+    />
+  </div>
+
+  <!-- ORDER -->
   <div class="card">
     <h3>Place Order</h3>
+
     <select id="service"></select>
+
     <div id="desc" class="desc"></div>
-    <input id="link" placeholder="Order URL">
+
+    <input id="link" placeholder="Enter link">
     <input id="qty" type="number" placeholder="Quantity">
-    <p>Price: <span id="price">0</span> UGX</p>
-    <button onclick="order()">Place Order</button>
+
+    <p class="price">
+      Price: <span id="price">0</span> UGX
+    </p>
+
+    <button class="order-btn" onclick="order()">Place Order</button>
   </div>
 
 </div>
