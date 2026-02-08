@@ -14,38 +14,66 @@
 
 <div class="container grid">
 
-  <!-- Wallet -->
-  <div class="card">
+  <!-- WALLET -->
+  <div class="card wallet">
     <h3>Wallet Balance</h3>
     <h1 id="wallet">UGX 0</h1>
+    <input type="number" id="depositAmount" placeholder="Enter amount (min 2000 UGX)">
+    <button class="mtn" onclick="depositMTN()">Deposit with MTN</button>
+    <button class="airtel" onclick="depositAirtel()">Deposit with Airtel</button>
+    <div class="note">
+      Minimum deposit is <b>2000 UGX</b>. Wallet is used automatically when placing orders.
+    </div>
   </div>
 
-  <!-- Deposit -->
-  <div class="card mtn">
-    <button onclick="deposit(2000,'MTN')">Deposit with MTN</button>
-  </div>
-  <div class="card airtel">
-    <button onclick="deposit(2000,'AIRTEL')">Deposit with Airtel</button>
-  </div>
-
-  <!-- Place Order -->
-  <div class="card">
+  <!-- PLACE ORDER -->
+  <div class="card order">
     <h3>📦 Place Order</h3>
     <select id="serviceSelect"></select>
     <div class="description" id="desc"></div>
     <input id="link" placeholder="Enter URL">
     <input id="qty" type="number" placeholder="Quantity">
     <h4>Total: UGX <span id="price">0</span></h4>
-    <button class="primary" onclick="order()">Place Order</button>
+    <button class="primary" onclick="placeOrder()">Place Order</button>
   </div>
 
-  <!-- Orders List -->
-  <div class="card">
-    <h3>📝 Your Orders</h3>
-    <ul id="ordersList"></ul>
+  <!-- SERVICES TABLE -->
+  <div class="card services">
+    <h3>Available Services</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Service</th>
+          <th>Price/Unit (UGX)</th>
+          <th>Quality</th>
+          <th>Max</th>
+          <th>Refill</th>
+        </tr>
+      </thead>
+      <tbody id="servicesTable"></tbody>
+    </table>
   </div>
+
+  <!-- ORDERS TABLE -->
+  <div class="card orders">
+    <h3>📝 Your Orders</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Service</th>
+          <th>Quantity</th>
+          <th>Total Price</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="ordersList"></tbody>
+    </table>
+  </div>
+
 </div>
 
 <script src="script.js"></script>
 </body>
-</html>
+  </html>
