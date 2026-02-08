@@ -1,7 +1,7 @@
 const email = "user@ashmediaboost.com";
 let allServices = [];
 
-/* AUTO LOGIN */
+/* LOGIN AUTO */
 fetch("/api/login", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
@@ -26,27 +26,26 @@ async function loadServices() {
 function populateServices(list) {
   const s = document.getElementById("service");
   s.innerHTML = "<option value=''>Select Service</option>";
-
   list.forEach(x => {
     const o = document.createElement("option");
     o.value = x.id;
     o.textContent = `${x.name} (${x.category})`;
-    o.dataset.price = x.priceUGX;
+    o.dataset.price = Math.round(x.priceUGX*1.8); // 1.8x profit
     o.dataset.desc = x.desc;
     s.appendChild(o);
   });
 }
 
+/* UPDATE PRICE */
 function updatePrice() {
   const sel = document.getElementById("service");
   const opt = sel.options[sel.selectedIndex];
   if (!opt || !opt.dataset.price) return;
-
   document.getElementById("price").innerText = opt.dataset.price;
   document.getElementById("desc").innerText = opt.dataset.desc;
 }
 
-/* SEARCH */
+/* SEARCH SERVICES */
 function filterServices() {
   const q = document.getElementById("serviceSearch").value.toLowerCase();
   const filtered = allServices.filter(s =>
@@ -55,28 +54,19 @@ function filterServices() {
   populateServices(filtered);
 }
 
-/* ORDER */
+/* PLACE ORDER */
 async function placeOrder() {
   const service = document.getElementById("service").value;
   const link = document.getElementById("link").value;
-  const quantity = document.getElementById("qty").value;
+  const qty = document.getElementById("qty").value;
   const price = document.getElementById("price").innerText;
 
-  if (!service || !link || !quantity) {
-    alert("Fill all fields");
-    return;
-  }
+  if (!service || !link || !qty) return alert("Fill all fields");
 
   await fetch("/api/order", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      email,
-      service,
-      link,
-      quantity,
-      price
-    })
+    body: JSON.stringify({ email, service, link, quantity: qty, price })
   });
 
   alert("Order placed successfully");
@@ -86,7 +76,7 @@ async function placeOrder() {
 /* DEPOSIT */
 async function deposit() {
   const amount = document.getElementById("deposit").value;
-  if (!amount) return alert("Enter amount");
+  if (!amount || amount < 500) return alert("Minimum deposit: 500 UGX");
 
   await fetch("/api/deposit", {
     method: "POST",
