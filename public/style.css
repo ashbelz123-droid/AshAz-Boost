@@ -1,98 +1,79 @@
-body{
+body {
+  font-family: Arial;
   margin:0;
-  font-family:Arial,Helvetica,sans-serif;
-  background:#f4f6f8;
+  background:#f5f7fa;
 }
 
-/* TOP BAR */
-.topbar{
-  background:#111;
-  color:#00e5ff;
-  padding:15px 20px;
+.topbar {
+  background:#0d6efd;
+  color:#fff;
+  padding:15px 25px;
   display:flex;
   justify-content:space-between;
+}
+
+.container {
+  padding:20px;
+}
+
+.services-table {
+  width:100%;
+  background:#fff;
+  border-collapse:collapse;
+  font-size:18px;
+}
+
+.services-table th, .services-table td {
+  padding:15px;
+  border-bottom:1px solid #ddd;
+}
+
+button {
+  padding:10px 18px;
+  background:#0d6efd;
+  border:none;
+  color:#fff;
+  cursor:pointer;
+  border-radius:6px;
+}
+
+.modal {
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.5);
+  justify-content:center;
   align-items:center;
 }
 
-/* WALLET */
-.wallet-box{
+.modal-content {
   background:#fff;
-  margin:20px;
-  padding:20px;
-  border-radius:10px;
-  box-shadow:0 4px 12px rgba(0,0,0,.1);
+  padding:25px;
+  width:90%;
+  max-width:400px;
+  border-radius:12px;
 }
 
-.wallet-box input{
-  width:100%;
-  padding:12px;
-  margin-top:10px;
-  font-size:16px;
-}
-
-/* DEPOSIT BUTTONS */
-.deposit-buttons{
-  display:flex;
-  gap:15px;
-  margin-top:15px;
-}
-
-.deposit-buttons button{
-  flex:1;
-  padding:14px;
-  font-size:18px;
-  border:none;
-  border-radius:8px;
-  color:#fff;
-  cursor:pointer;
-}
-
-.mtn{ background:#ffcc00; color:#000; }
-.airtel{ background:#e60000; }
-
-/* SECTIONS */
-.section{
-  background:#fff;
-  margin:20px;
-  padding:20px;
-  border-radius:10px;
-  box-shadow:0 4px 12px rgba(0,0,0,.1);
-}
-
-.section h3{ margin-bottom:10px; }
-
-.section input{
+.modal-content input {
   width:100%;
   padding:10px;
-  margin-bottom:10px;
+  margin:8px 0 15px;
 }
 
-/* TABLES */
-.table-wrap{ overflow-x:auto; }
-
-table{
+.confirm {
   width:100%;
-  border-collapse:collapse;
+  background:#28a745;
+  font-size:18px;
 }
 
-th,td{
-  padding:12px;
-  border-bottom:1px solid #ddd;
-  text-align:center;
-}
-
-th{ background:#00e5ff; color:#000; }
-
-td button{
-  padding:6px 12px;
-  background:#00e5ff;
-  border:none;
-  border-radius:5px;
+.close {
+  float:right;
   cursor:pointer;
+  font-size:22px;
 }
 
-/* MOBILE */
-@media(max-width:768px){
-  h2{ font-size:18px; }
-  th,td{ font-size:14px; }
-     }
+footer {
+  text-align:center;
+  padding:15px;
+  color:#777;
+}
