@@ -1,129 +1,106 @@
-// ===== Current User =====
 let currentEmail = localStorage.getItem("userEmail") || "user@ashmediaboost.com";
-let walletBalance = 0;
-let services = [];
-let orders = [];
+let wallet = Number(localStorage.getItem("wallet_"+currentEmail)) || 0;
+let orders = JSON.parse(localStorage.getItem("orders_"+currentEmail)) || [];
 
-// ===== Welcome & Wallet =====
-document.getElementById("welcomeMsg")?.innerText = "Welcome, " + currentEmail.split("@")[0] + "!";
+/* WELCOME */
+document.getElementById("welcomeMsg").innerText =
+  "Welcome, " + currentEmail.split("@")[0];
+
+/* WALLET */
 function updateWallet(){
-  walletBalance = parseInt(localStorage.getItem("wallet_"+currentEmail)) || 0;
-  const walletElem = document.getElementById("walletBalance");
-  if(walletElem) walletElem.innerText = "Wallet: UGX " + walletBalance.toLocaleString();
+  document.getElementById("walletBalance").innerText =
+    "Wallet: UGX " + wallet.toLocaleString();
 }
 updateWallet();
 
-// ===== Deposit =====
-async function deposit(channel){
-  const amountInput = document.getElementById("depositAmount");
-  if(!amountInput) return;
-  const amount = parseInt(amountInput.value);
-  if(!amount || amount < 500){ alert("Minimum deposit is 500 UGX"); return; }
-
-  // Open PesaPal sandbox for now
-  try{
-    const resp = await axios.post("/api/deposit", { email:currentEmail, amount, provider:channel });
-    if(resp.data.url){
-      window.open(resp.data.url,"_blank");
-    }else{
-      alert("Payment request failed");
-    }
-  }catch(err){
-    console.log(err);
-    alert("Error initiating payment");
+/* DEPOSIT (SIMULATED FOR NOW) */
+function deposit(channel){
+  let amt = Number(document.getElementById("depositAmount").value);
+  if(!amt || amt < 500){
+    alert("Minimum deposit is 500 UGX");
+    return;
   }
+  wallet += amt;
+  localStorage.setItem("wallet_"+currentEmail, wallet);
+  updateWallet();
+  alert(channel + " deposit successful!");
 }
 
-// ===== Dummy Services =====
-services = [
-  {id:1, platform:"Instagram", name:"Followers", priceUGX:1000, min:10, max:10000, desc:"High Quality, Real Accounts"},
-  {id:2, platform:"Facebook", name:"Likes", priceUGX:500, min:5, max:5000, desc:"Fast Delivery"},
-  {id:3, platform:"Twitter", name:"Retweets", priceUGX:300, min:5, max:1000, desc:"Instant Start"},
-  {id:4, platform:"YouTube", name:"Views", priceUGX:200, min:50, max:100000, desc:"High Retention"},
+/* SERVICES */
+const services = [
+ {id:1,platform:"Instagram",name:"Followers",price:1800,min:10,max:100000,desc:"Real & HQ"},
+ {id:2,platform:"Instagram",name:"Likes",price:1200,min:10,max:50000,desc:"Fast"},
+ {id:3,platform:"TikTok",name:"Followers",price:1500,min:10,max:100000,desc:"Stable"},
+ {id:4,platform:"YouTube",name:"Views",price:900,min:100,max:1000000,desc:"High retention"},
+ {id:5,platform:"Telegram",name:"Members",price:1100,min:50,max:100000,desc:"No refill"}
 ];
 
-// ===== Render Services Table =====
+function icon(p){
+  return `<i class="fab fa-${p.toLowerCase()}"></i>`;
+}
+
 function renderServices(list=services){
-  const tbody = document.querySelector("#servicesTable tbody");
-  if(!tbody) return;
-  tbody.innerHTML = "";
+  let tbody = document.querySelector("#servicesTable tbody");
+  tbody.innerHTML="";
   list.forEach(s=>{
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${getPlatformIcon(s.platform)} ${s.platform}</td>
-      <td>${s.name}</td>
-      <td>${s.priceUGX.toLocaleString()}</td>
-      <td>${s.min}</td>
-      <td>${s.max}</td>
-      <td>${s.desc}</td>
-      <td><input type="number" min="${s.min}" max="${s.max}" value="${s.min}" id="qty_${s.id}"></td>
-      <td><button onclick="placeOrder(${s.id})">Order</button></td>
-    `;
-    tbody.appendChild(tr);
+    tbody.innerHTML += `
+      <tr>
+        <td>${icon(s.platform)} ${s.platform}</td>
+        <td>${s.name}</td>
+        <td>${s.price}</td>
+        <td>${s.min}</td>
+        <td>${s.max}</td>
+        <td>${s.desc}</td>
+        <td><input type="number" id="q${s.id}" value="${s.min}" min="${s.min}"></td>
+        <td><button onclick="order(${s.id})">Order</button></td>
+      </tr>`;
   });
 }
 renderServices();
 
-// ===== Place Order =====
-function placeOrder(serviceId){
-  const service = services.find(s=>s.id===serviceId);
-  const qtyInput = document.getElementById(`qty_${serviceId}`);
-  if(!qtyInput) return;
-  const qty = parseInt(qtyInput.value);
-  const totalPrice = service.priceUGX * qty / service.min;
-
-  if(totalPrice>walletBalance){ alert("Insufficient balance"); return; }
-
-  walletBalance -= totalPrice;
-  localStorage.setItem("wallet_"+currentEmail, walletBalance);
-  updateWallet();
-
-  // Save order
-  const order = {id:Date.now(), platform:service.platform, service:service.name, quantity:qty, price:totalPrice, status:"Pending"};
-  orders.push(order);
+/* ORDER */
+function order(id){
+  let s = services.find(x=>x.id===id);
+  let q = Number(document.getElementById("q"+id).value);
+  let cost = s.price;
+  if(wallet < cost){ alert("Insufficient balance"); return; }
+  wallet -= cost;
+  orders.push({
+    id:Date.now(),
+    platform:s.platform,
+    service:s.name,
+    qty:q,
+    price:cost,
+    status:"Processing"
+  });
+  localStorage.setItem("wallet_"+currentEmail, wallet);
   localStorage.setItem("orders_"+currentEmail, JSON.stringify(orders));
+  updateWallet();
   loadOrders();
-  alert("Order placed!");
 }
 
-// ===== Load Orders =====
+/* ORDERS */
 function loadOrders(){
-  orders = JSON.parse(localStorage.getItem("orders_"+currentEmail)) || [];
-  const tbody = document.querySelector("#ordersTable tbody");
-  if(!tbody) return;
-  tbody.innerHTML = "";
+  let tbody = document.querySelector("#ordersTable tbody");
+  tbody.innerHTML="";
   orders.forEach(o=>{
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${o.id}</td>
-      <td>${o.platform}</td>
-      <td>${o.service}</td>
-      <td>${o.quantity}</td>
-      <td>${o.price.toLocaleString()}</td>
-      <td>${o.status}</td>
-    `;
-    tbody.appendChild(tr);
+    tbody.innerHTML += `
+      <tr>
+        <td>${o.id}</td>
+        <td>${o.platform}</td>
+        <td>${o.service}</td>
+        <td>${o.qty}</td>
+        <td>${o.price}</td>
+        <td>${o.status}</td>
+      </tr>`;
   });
 }
 loadOrders();
 
-// ===== Search / Filter Services =====
+/* SEARCH */
 function filterServices(){
-  const search = document.getElementById("searchInput")?.value.toLowerCase() || "";
-  const filtered = services.filter(s=>s.name.toLowerCase().includes(search)||s.platform.toLowerCase().includes(search));
-  renderServices(filtered);
-}
-
-// ===== Platform Icons =====
-function getPlatformIcon(name){
-  switch(name.toLowerCase()){
-    case "instagram": return '<i class="fab fa-instagram"></i>';
-    case "facebook": return '<i class="fab fa-facebook"></i>';
-    case "twitter": return '<i class="fab fa-twitter"></i>';
-    case "youtube": return '<i class="fab fa-youtube"></i>';
-    case "telegram": return '<i class="fab fa-telegram"></i>';
-    case "tiktok": return '<i class="fab fa-tiktok"></i>';
-    case "linkedin": return '<i class="fab fa-linkedin"></i>';
-    default: return '<i class="fas fa-globe"></i>';
-  }
-                                                   }
+  let s=document.getElementById("searchInput").value.toLowerCase();
+  renderServices(services.filter(x =>
+    x.name.toLowerCase().includes(s) || x.platform.toLowerCase().includes(s)
+  ));
+   }
