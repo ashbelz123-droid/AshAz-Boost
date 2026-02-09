@@ -1,85 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>AshMediaBoost – Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- Main CSS -->
-  <link rel="stylesheet" href="/style.css">
-
-  <!-- Icons -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+<meta charset="UTF-8">
+<title>AshMediaBoost Dashboard</title>
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<!-- ===== TOP BAR ===== -->
 <header class="topbar">
   <h1>🚀 AshMediaBoost</h1>
-  <div class="user">
-    <span id="userEmail"></span>
-    <button onclick="logout()">Logout</button>
-  </div>
+  <div class="user">ashbelz | <a href="login.html">Logout</a></div>
 </header>
 
-<!-- ===== MAIN ===== -->
-<main class="container">
+<section class="container">
 
-  <!-- ===== SERVICES ===== -->
-  <section class="card">
-    <h2>📊 Available Services</h2>
+<h2>📊 Available Services</h2>
 
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Category</th>
-            <th>Service</th>
-            <th>Min</th>
-            <th>Max</th>
-            <th>Price ($)</th>
-            <th>Order</th>
-          </tr>
-        </thead>
+<table class="services-table">
+  <thead>
+    <tr>
+      <th>Platform</th>
+      <th>Service</th>
+      <th>Min</th>
+      <th>Max</th>
+      <th>Price ($)</th>
+      <th>Order</th>
+    </tr>
+  </thead>
 
-        <tbody id="services">
-          <!-- Loaded by script.js -->
-        </tbody>
-      </table>
-    </div>
-  </section>
+  <tbody>
+    <tr>
+      <td>📸 Instagram</td>
+      <td>Followers</td>
+      <td>100</td>
+      <td>10000</td>
+      <td>1.80</td>
+      <td>
+        <button onclick="openOrder('Instagram Followers',1.80)">Order</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-  <!-- ===== ORDER BOX ===== -->
-  <section class="card" id="orderBox" style="display:none;">
-    <h2>🛒 Place Order</h2>
+</section>
 
-    <input type="text" id="link" placeholder="Enter service link">
-    <input type="number" id="quantity" placeholder="Enter quantity">
+<!-- ORDER MODAL -->
+<div id="orderBox" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeOrder()">×</span>
+    <h3 id="serviceName"></h3>
 
-    <button class="primary" onclick="placeOrder()">Submit Order</button>
-  </section>
+    <label>Link</label>
+    <input type="text" id="orderLink" placeholder="https://instagram.com/...">
 
-</main>
+    <label>Quantity</label>
+    <input type="number" id="orderQty" value="100" min="1" oninput="calcPrice()">
 
-<!-- ===== FOOTER ===== -->
+    <p>Total Price: <b>$<span id="totalPrice">1.80</span></b></p>
+
+    <button class="confirm">Place Order</button>
+  </div>
+</div>
+
 <footer>
-  <p>© 2026 AshMediaBoost • Powered by GodSMM</p>
+© 2026 AshMediaBoost • Powered by GodSMM
 </footer>
 
-<!-- JS -->
-<script src="/script.js"></script>
-
-<script>
-  // Show logged-in user
-  document.getElementById("userEmail").innerText =
-    localStorage.getItem("user") || "User";
-
-  function logout(){
-    localStorage.removeItem("user");
-    window.location.href = "/login";
-  }
-</script>
-
+<script src="script.js"></script>
 </body>
   </html>
