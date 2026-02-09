@@ -1,30 +1,40 @@
+// ===== Current User =====
 let currentEmail = localStorage.getItem("userEmail") || "user@ashmediaboost.com";
 let walletBalance = 0;
 let services = [];
 let orders = [];
 
-// Show welcome message
-document.getElementById("welcomeMsg").innerText = "Welcome, " + currentEmail.split("@")[0] + "!";
-
-// Dummy wallet
-async function updateWallet(){
-  // Replace with real API later
+// ===== Welcome & Wallet =====
+document.getElementById("welcomeMsg")?.innerText = "Welcome, " + currentEmail.split("@")[0] + "!";
+function updateWallet(){
   walletBalance = parseInt(localStorage.getItem("wallet_"+currentEmail)) || 0;
-  document.getElementById("walletBalance").innerText = "Wallet: UGX " + walletBalance.toLocaleString();
+  const walletElem = document.getElementById("walletBalance");
+  if(walletElem) walletElem.innerText = "Wallet: UGX " + walletBalance.toLocaleString();
 }
 updateWallet();
 
-// Deposit
+// ===== Deposit =====
 async function deposit(channel){
-  const amount = parseInt(document.getElementById("depositAmount").value);
+  const amountInput = document.getElementById("depositAmount");
+  if(!amountInput) return;
+  const amount = parseInt(amountInput.value);
   if(!amount || amount < 500){ alert("Minimum deposit is 500 UGX"); return; }
-  walletBalance += amount;
-  localStorage.setItem("wallet_"+currentEmail, walletBalance);
-  updateWallet();
-  alert(`Deposit successful via ${channel}!`);
+
+  // Open PesaPal sandbox for now
+  try{
+    const resp = await axios.post("/api/deposit", { email:currentEmail, amount, provider:channel });
+    if(resp.data.url){
+      window.open(resp.data.url,"_blank");
+    }else{
+      alert("Payment request failed");
+    }
+  }catch(err){
+    console.log(err);
+    alert("Error initiating payment");
+  }
 }
 
-// Dummy services
+// ===== Dummy Services =====
 services = [
   {id:1, platform:"Instagram", name:"Followers", priceUGX:1000, min:10, max:10000, desc:"High Quality, Real Accounts"},
   {id:2, platform:"Facebook", name:"Likes", priceUGX:500, min:5, max:5000, desc:"Fast Delivery"},
@@ -32,11 +42,12 @@ services = [
   {id:4, platform:"YouTube", name:"Views", priceUGX:200, min:50, max:100000, desc:"High Retention"},
 ];
 
-// Render services table
-function renderServices(){
+// ===== Render Services Table =====
+function renderServices(list=services){
   const tbody = document.querySelector("#servicesTable tbody");
+  if(!tbody) return;
   tbody.innerHTML = "";
-  services.forEach(s=>{
+  list.forEach(s=>{
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${getPlatformIcon(s.platform)} ${s.platform}</td>
@@ -53,17 +64,21 @@ function renderServices(){
 }
 renderServices();
 
-// Place order
+// ===== Place Order =====
 function placeOrder(serviceId){
   const service = services.find(s=>s.id===serviceId);
-  const qty = parseInt(document.getElementById(`qty_${serviceId}`).value);
+  const qtyInput = document.getElementById(`qty_${serviceId}`);
+  if(!qtyInput) return;
+  const qty = parseInt(qtyInput.value);
   const totalPrice = service.priceUGX * qty / service.min;
+
   if(totalPrice>walletBalance){ alert("Insufficient balance"); return; }
+
   walletBalance -= totalPrice;
   localStorage.setItem("wallet_"+currentEmail, walletBalance);
   updateWallet();
 
-  // Add to orders
+  // Save order
   const order = {id:Date.now(), platform:service.platform, service:service.name, quantity:qty, price:totalPrice, status:"Pending"};
   orders.push(order);
   localStorage.setItem("orders_"+currentEmail, JSON.stringify(orders));
@@ -71,10 +86,11 @@ function placeOrder(serviceId){
   alert("Order placed!");
 }
 
-// Load orders
+// ===== Load Orders =====
 function loadOrders(){
   orders = JSON.parse(localStorage.getItem("orders_"+currentEmail)) || [];
   const tbody = document.querySelector("#ordersTable tbody");
+  if(!tbody) return;
   tbody.innerHTML = "";
   orders.forEach(o=>{
     const tr = document.createElement("tr");
@@ -91,29 +107,14 @@ function loadOrders(){
 }
 loadOrders();
 
-// Filter services
+// ===== Search / Filter Services =====
 function filterServices(){
-  const search = document.getElementById("searchInput").value.toLowerCase();
+  const search = document.getElementById("searchInput")?.value.toLowerCase() || "";
   const filtered = services.filter(s=>s.name.toLowerCase().includes(search)||s.platform.toLowerCase().includes(search));
-  const tbody = document.querySelector("#servicesTable tbody");
-  tbody.innerHTML = "";
-  filtered.forEach(s=>{
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${getPlatformIcon(s.platform)} ${s.platform}</td>
-      <td>${s.name}</td>
-      <td>${s.priceUGX.toLocaleString()}</td>
-      <td>${s.min}</td>
-      <td>${s.max}</td>
-      <td>${s.desc}</td>
-      <td><input type="number" min="${s.min}" max="${s.max}" value="${s.min}" id="qty_${s.id}"></td>
-      <td><button onclick="placeOrder(${s.id})">Order</button></td>
-    `;
-    tbody.appendChild(tr);
-  });
+  renderServices(filtered);
 }
 
-// Platform icons
+// ===== Platform Icons =====
 function getPlatformIcon(name){
   switch(name.toLowerCase()){
     case "instagram": return '<i class="fab fa-instagram"></i>';
@@ -125,4 +126,4 @@ function getPlatformIcon(name){
     case "linkedin": return '<i class="fab fa-linkedin"></i>';
     default: return '<i class="fas fa-globe"></i>';
   }
-    }
+                                                   }
