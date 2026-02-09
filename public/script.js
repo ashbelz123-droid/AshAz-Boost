@@ -1,18 +1,27 @@
-let basePrice = 0;
+document.querySelector(".confirm").onclick = async () => {
+  const link = document.getElementById("orderLink").value;
+  const qty = document.getElementById("orderQty").value;
 
-function openOrder(service, price){
-  document.getElementById("orderBox").style.display="flex";
-  document.getElementById("serviceName").innerText = service;
-  basePrice = price;
-  calcPrice();
-}
+  if(!link || !qty){
+    alert("Fill all fields!");
+    return;
+  }
 
-function closeOrder(){
-  document.getElementById("orderBox").style.display="none";
-}
+  const res = await fetch("/api/order", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({
+      service: 1, // ⚠️ replace with REAL service ID from GodSMM
+      link: link,
+      quantity: qty
+    })
+  });
 
-function calcPrice(){
-  let qty = document.getElementById("orderQty").value;
-  let total = (qty / 100) * basePrice;
-  document.getElementById("totalPrice").innerText = total.toFixed(2);
-}
+  const data = await res.json();
+
+  if(data.order){
+    alert("✅ Order placed! ID: " + data.order);
+  } else {
+    alert("❌ Order failed");
+  }
+};
