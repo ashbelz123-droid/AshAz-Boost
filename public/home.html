@@ -3,32 +3,68 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login | AshMediaBoost</title>
+<title>AshMediaBoost Home</title>
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-<div class="login-container">
-  <h2>Login</h2>
-  <input type="email" id="email" placeholder="Email">
-  <input type="password" id="password" placeholder="Password">
-  <button onclick="login()">Login</button>
-  <div id="loginMsg" class="msg"></div>
-  <p>Don't have an account? <a href="/signup">Sign Up</a></p>
+
+<!-- Navbar -->
+<div class="navbar">
+  <h2>AshMediaBoost</h2>
+  <div id="homeWelcome">Welcome to AshMediaBoost!</div>
+  <div>
+    <a href="/login" class="btn">Login</a>
+    <a href="/signup" class="btn">Sign Up</a>
+  </div>
+</div>
+
+<!-- Hero Section -->
+<div class="hero">
+  <h1>Boost Your Social Media Accounts Instantly!</h1>
+  <p>Fast, Cheap & High-Quality SMM Services for Instagram, Facebook, Twitter, YouTube, TikTok, Telegram & LinkedIn</p>
+  <a href="/signup" class="btn hero-btn">Get Started</a>
+</div>
+
+<!-- Platforms Section -->
+<div class="container platforms-container">
+  <div class="card platform-card">
+    <i class="fab fa-instagram fa-3x"></i>
+    <h3>Instagram</h3>
+  </div>
+  <div class="card platform-card">
+    <i class="fab fa-facebook fa-3x"></i>
+    <h3>Facebook</h3>
+  </div>
+  <div class="card platform-card">
+    <i class="fab fa-twitter fa-3x"></i>
+    <h3>Twitter</h3>
+  </div>
+  <div class="card platform-card">
+    <i class="fab fa-youtube fa-3x"></i>
+    <h3>YouTube</h3>
+  </div>
+  <div class="card platform-card">
+    <i class="fab fa-telegram fa-3x"></i>
+    <h3>Telegram</h3>
+  </div>
+  <div class="card platform-card">
+    <i class="fab fa-tiktok fa-3x"></i>
+    <h3>TikTok</h3>
+  </div>
+  <div class="card platform-card">
+    <i class="fab fa-linkedin fa-3x"></i>
+    <h3>LinkedIn</h3>
+  </div>
 </div>
 
 <script>
-async function login(){
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  const res = await fetch("/api/login", {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({email,password})
-  });
-  const data = await res.json();
-  if(data.success){ window.location.href="/dashboard"; }
-  else{ document.getElementById("loginMsg").innerText = data.error; }
+// Show logged-in user if stored in localStorage
+let currentUser = localStorage.getItem("userEmail");
+if(currentUser){
+  document.getElementById("homeWelcome").innerText = "Welcome, " + currentUser.split("@")[0] + "!";
 }
 </script>
+
 </body>
-</html>
+  </html>
