@@ -1,84 +1,78 @@
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  background: #f4f6f9;
+let selectedService = null;
+
+/* LOAD ALL GODSMM SERVICES */
+async function loadServices() {
+  const res = await fetch("/api/services");
+  const services = await res.json();
+
+  const tbody = document.querySelector("#servicesTable tbody");
+  tbody.innerHTML = "";
+
+  services.forEach(s => {
+    // Only show OUR price (1.8x profit)
+    const ourPrice = (parseFloat(s.rate) * 1.8).toFixed(2);
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${s.category}</td>
+      <td>${s.name}</td>
+      <td>${s.min}</td>
+      <td>${s.max}</td>
+      <td>$${ourPrice}</td>
+      <td><button onclick="openModal(${s.service})">Order</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
 }
 
-.topbar {
-  background: #111;
-  color: #fff;
-  padding: 15px 25px;
-  display: flex;
-  justify-content: space-between;
+/* OPEN ORDER BOX */
+function openModal(serviceId) {
+  selectedService = serviceId;
+  document.getElementById("orderModal").style.display = "flex";
 }
 
-.container {
-  padding: 20px;
+/* CLOSE ORDER BOX */
+function closeModal() {
+  document.getElementById("orderModal").style.display = "none";
 }
 
-#search {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 15px;
-  font-size: 16px;
-}
+/* CONFIRM ORDER */
+document.getElementById("confirmOrder").onclick = async () => {
+  const link = document.getElementById("orderLink").value;
+  const qty = document.getElementById("orderQty").value;
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: #fff;
-}
+  if (!link || !qty) {
+    alert("Fill all fields!");
+    return;
+  }
 
-th, td {
-  padding: 14px;
-  border-bottom: 1px solid #ddd;
-  text-align: left;
-}
+  const res = await fetch("/api/order", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      service: selectedService,
+      link,
+      quantity: qty
+    })
+  });
 
-th {
-  background: #222;
-  color: #fff;
-}
+  const data = await res.json();
 
-button {
-  padding: 8px 14px;
-  background: #007bff;
-  color: #fff;
-  border: none;
-  cursor: pointer;
-}
+  if (data.order) {
+    alert("✅ Order placed! ID: " + data.order);
+  } else {
+    alert("❌ Order failed");
+  }
 
-button:hover {
-  background: #0056b3;
-}
+  closeModal();
+};
 
-/* MODAL */
-#orderModal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  align-items: center;
-  justify-content: center;
-}
+/* SEARCH */
+document.getElementById("search").addEventListener("keyup", function () {
+  const value = this.value.toLowerCase();
+  document.querySelectorAll("#servicesTable tbody tr").forEach(row => {
+    row.style.display = row.innerText.toLowerCase().includes(value) ? "" : "none";
+  });
+});
 
-.modalBox {
-  background: #fff;
-  padding: 25px;
-  width: 320px;
-  border-radius: 8px;
-}
-
-.modalBox input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-}
-
-footer {
-  text-align: center;
-  padding: 15px;
-  background: #111;
-  color: #fff;
-  margin-top: 30px;
-}
+loadServices();
