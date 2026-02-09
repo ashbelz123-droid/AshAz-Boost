@@ -1,78 +1,22 @@
-let selectedService = null;
-
-/* LOAD ALL GODSMM SERVICES */
-async function loadServices() {
-  const res = await fetch("/api/services");
-  const services = await res.json();
-
-  const tbody = document.querySelector("#servicesTable tbody");
-  tbody.innerHTML = "";
-
-  services.forEach(s => {
-    // Only show OUR price (1.8x profit)
-    const ourPrice = (parseFloat(s.rate) * 1.8).toFixed(2);
-
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${s.category}</td>
-      <td>${s.name}</td>
-      <td>${s.min}</td>
-      <td>${s.max}</td>
-      <td>$${ourPrice}</td>
-      <td><button onclick="openModal(${s.service})">Order</button></td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
-
-/* OPEN ORDER BOX */
-function openModal(serviceId) {
-  selectedService = serviceId;
-  document.getElementById("orderModal").style.display = "flex";
-}
-
-/* CLOSE ORDER BOX */
-function closeModal() {
-  document.getElementById("orderModal").style.display = "none";
-}
-
-/* CONFIRM ORDER */
-document.getElementById("confirmOrder").onclick = async () => {
-  const link = document.getElementById("orderLink").value;
-  const qty = document.getElementById("orderQty").value;
-
-  if (!link || !qty) {
-    alert("Fill all fields!");
-    return;
-  }
-
-  const res = await fetch("/api/order", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      service: selectedService,
-      link,
-      quantity: qty
-    })
-  });
-
-  const data = await res.json();
-
-  if (data.order) {
-    alert("✅ Order placed! ID: " + data.order);
-  } else {
-    alert("❌ Order failed");
-  }
-
-  closeModal();
-};
-
-/* SEARCH */
-document.getElementById("search").addEventListener("keyup", function () {
-  const value = this.value.toLowerCase();
-  document.querySelectorAll("#servicesTable tbody tr").forEach(row => {
-    row.style.display = row.innerText.toLowerCase().includes(value) ? "" : "none";
-  });
-});
-
-loadServices();
+body { font-family:sans-serif; margin:0; padding:0; background:#f9f9f9; }
+.topbar { display:flex; justify-content:space-between; padding:1rem; background:#222; color:#fff; }
+.container { max-width:1000px; margin:20px auto; padding:1rem; }
+.auth-box { max-width:400px; margin:50px auto; padding:2rem; background:#fff; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.1); }
+.auth-box input { width:100%; padding:0.8rem; margin:0.5rem 0; border-radius:5px; border:1px solid #ccc; }
+.auth-box button { width:100%; padding:0.8rem; margin-top:1rem; border:none; border-radius:5px; background:#222; color:#fff; cursor:pointer; }
+.wallet-card { background:#fff; padding:1rem; border-radius:10px; box-shadow:0 0 5px rgba(0,0,0,0.1); margin-bottom:1rem; }
+.depositButtons button { margin:5px; padding:0.5rem 1rem; border:none; border-radius:5px; cursor:pointer; }
+.depositButtons button:nth-child(1){background:#FFD700; color:#000;} /* MTN yellow */
+.depositButtons button:nth-child(2){background:#FF0000; color:#fff;} /* Airtel red */
+.depositButtons button:nth-child(3){background:#00A86B; color:#fff;} /* Pesapal green */
+.modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; }
+.modalBox { background:#fff; padding:2rem; border-radius:10px; max-width:400px; width:90%; }
+table { width:100%; border-collapse:collapse; margin-top:1rem; }
+th, td { padding:10px; text-align:left; border-bottom:1px solid #ccc; }
+.platforms { display:flex; gap:1rem; flex-wrap:wrap; margin-top:1rem; }
+.platform { padding:1rem; border-radius:8px; color:#fff; text-align:center; flex:1; }
+.platform.instagram{background:#C13584;}
+.platform.tiktok{background:#69C9D0;}
+.platform.youtube{background:#FF0000;}
+.platform.twitter{background:#1DA1F2;}
+.platform.telegram{background:#0088cc;}
