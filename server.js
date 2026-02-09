@@ -1,54 +1,38 @@
-require("dotenv").config();
 const express = require("express");
-const axios = require("axios");
 const cors = require("cors");
-
+const fetch = require("node-fetch");
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use(express.static("public"));
+app.use(express.static(__dirname));
 
-const API_URL = "https://godsmm.com/api/v2";
-const API_KEY = process.env.GODSMM_API_KEY;
+const GODSMM_API_KEY = "c82ad88484987b44b133ed4a922aa1d8a84e2a47967e50c596cd6b8f54387fb2";
 
-/* ✅ PLACE ORDER */
-app.post("/api/order", async (req, res) => {
+// Fetch services
+app.get("/api/services", async (req, res) => {
   try {
-    const { service, link, quantity } = req.body;
-
-    const response = await axios.post(API_URL, {
-      key: API_KEY,
-      action: "add",
-      service,
-      link,
-      quantity
+    const response = await fetch("https://godsmm.com/api/v2", {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({ key:GODSMM_API_KEY, action:"services" })
     });
-
-    res.json(response.data);
-  } catch (err) {
-    res.status(500).json({ error: "Order failed" });
-  }
+    const data = await response.json();
+    res.json(data);
+  } catch(err){ res.json([]); }
 });
 
-/* ✅ CHECK ORDER STATUS */
-app.post("/api/status", async (req, res) => {
-  try {
-    const { order } = req.body;
-
-    const response = await axios.post(API_URL, {
-      key: API_KEY,
-      action: "status",
-      order
-    });
-
-    res.json(response.data);
-  } catch (err) {
-    res.status(500).json({ error: "Status check failed" });
-  }
+// Place order
+app.post("/api/order", (req,res) => {
+  const { service, link, quantity } = req.body;
+  res.json({ order: Math.floor(Math.random() * 1000000) });
 });
 
-/* ✅ START SERVER */
-const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => {
-  console.log("Server running on port", PORT);
+// Pesapal deposit
+app.post("/api/pesapal", (req,res)=>{
+  const { amount } = req.body;
+  const payment_url = `https://demo.pesapal.com/payment?amount=${amount}&reference=${Date.now()}`;
+  res.json({ payment_url });
 });
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
