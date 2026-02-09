@@ -1,79 +1,84 @@
 body {
-  font-family: Arial;
-  margin:0;
-  background:#f5f7fa;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #f4f6f9;
 }
 
 .topbar {
-  background:#0d6efd;
-  color:#fff;
-  padding:15px 25px;
-  display:flex;
-  justify-content:space-between;
+  background: #111;
+  color: #fff;
+  padding: 15px 25px;
+  display: flex;
+  justify-content: space-between;
 }
 
 .container {
-  padding:20px;
+  padding: 20px;
 }
 
-.services-table {
-  width:100%;
-  background:#fff;
-  border-collapse:collapse;
-  font-size:18px;
+#search {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  font-size: 16px;
 }
 
-.services-table th, .services-table td {
-  padding:15px;
-  border-bottom:1px solid #ddd;
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+th, td {
+  padding: 14px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+th {
+  background: #222;
+  color: #fff;
 }
 
 button {
-  padding:10px 18px;
-  background:#0d6efd;
-  border:none;
-  color:#fff;
-  cursor:pointer;
-  border-radius:6px;
+  padding: 8px 14px;
+  background: #007bff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
 }
 
-.modal {
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.5);
-  justify-content:center;
-  align-items:center;
+button:hover {
+  background: #0056b3;
 }
 
-.modal-content {
-  background:#fff;
-  padding:25px;
-  width:90%;
-  max-width:400px;
-  border-radius:12px;
+/* MODAL */
+#orderModal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  align-items: center;
+  justify-content: center;
 }
 
-.modal-content input {
-  width:100%;
-  padding:10px;
-  margin:8px 0 15px;
+.modalBox {
+  background: #fff;
+  padding: 25px;
+  width: 320px;
+  border-radius: 8px;
 }
 
-.confirm {
-  width:100%;
-  background:#28a745;
-  font-size:18px;
-}
-
-.close {
-  float:right;
-  cursor:pointer;
-  font-size:22px;
+.modalBox input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
 }
 
 footer {
-  text-align:center;
-  padding:15px;
-  color:#777;
+  text-align: center;
+  padding: 15px;
+  background: #111;
+  color: #fff;
+  margin-top: 30px;
 }
