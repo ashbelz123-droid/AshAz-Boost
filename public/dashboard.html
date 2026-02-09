@@ -2,69 +2,65 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AshMediaBoost Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
+
 <body>
 
-<!-- Navbar -->
-<div class="navbar">
-  <h2>AshMediaBoost</h2>
-  <div id="welcomeMsg">Welcome, User!</div>
-  <div id="walletBalance">Wallet: UGX 0</div>
-  <a href="/login" class="btn">Logout</a>
+<!-- TOP BAR -->
+<div class="topbar">
+  <h2>🚀 AshMediaBoost</h2>
+  <div id="welcomeMsg">Welcome</div>
 </div>
 
-<div class="container">
-
-  <!-- Deposit Card -->
-  <div class="card wallet-card">
-    <h3>👤 Wallet</h3>
-    <input type="number" id="depositAmount" placeholder="Enter amount (min 500 UGX)" min="500">
-    <div class="deposit-buttons">
-      <button class="mtn" onclick="deposit('MTN')"><i class="fa fa-mobile-alt"></i> Deposit with MTN</button>
-      <button class="airtel" onclick="deposit('AIRTEL')"><i class="fa fa-mobile-alt"></i> Deposit with Airtel</button>
-    </div>
-    <div class="note">Minimum deposit is <b>500 UGX</b>. Wallet is used automatically for orders.</div>
+<!-- WALLET -->
+<div class="wallet-box">
+  <h3 id="walletBalance">Wallet: UGX 0</h3>
+  <input type="number" id="depositAmount" placeholder="Enter amount (min 500)">
+  <div class="deposit-buttons">
+    <button class="mtn" onclick="deposit('MTN')">MTN</button>
+    <button class="airtel" onclick="deposit('AIRTEL')">Airtel</button>
   </div>
+</div>
 
-  <!-- Search / Filter -->
-  <div class="card search-card">
-    <input type="text" id="searchInput" placeholder="Search services..." onkeyup="filterServices()">
-  </div>
-
-  <!-- Services Table -->
-  <div class="card services-card">
-    <h3>📋 Available Services</h3>
+<!-- SERVICES -->
+<div class="section">
+  <h3>📦 Services</h3>
+  <input id="searchInput" onkeyup="filterServices()" placeholder="Search services...">
+  <div class="table-wrap">
     <table id="servicesTable">
       <thead>
         <tr>
           <th>Platform</th>
           <th>Service</th>
-          <th>Price (UGX)</th>
+          <th>Price</th>
           <th>Min</th>
           <th>Max</th>
           <th>Description</th>
-          <th>Quantity</th>
-          <th>Action</th>
+          <th>Qty</th>
+          <th>Order</th>
         </tr>
       </thead>
       <tbody></tbody>
     </table>
   </div>
+</div>
 
-  <!-- Orders Table -->
-  <div class="card orders-card">
-    <h3>📝 Your Orders</h3>
+<!-- ORDERS -->
+<div class="section">
+  <h3>📑 Orders</h3>
+  <div class="table-wrap">
     <table id="ordersTable">
       <thead>
         <tr>
-          <th>Order ID</th>
+          <th>ID</th>
           <th>Platform</th>
           <th>Service</th>
-          <th>Quantity</th>
+          <th>Qty</th>
           <th>Price</th>
           <th>Status</th>
         </tr>
@@ -72,7 +68,6 @@
       <tbody></tbody>
     </table>
   </div>
-
 </div>
 
 <script src="script.js"></script>
