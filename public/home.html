@@ -2,69 +2,34 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AshMediaBoost Home</title>
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+<header class="topbar">
+  <h1>🚀 AshMediaBoost</h1>
+  <nav>
+    <a href="login.html">Login</a> | 
+    <a href="signup.html">Sign Up</a>
+  </nav>
+</header>
 
-<!-- Navbar -->
-<div class="navbar">
-  <h2>AshMediaBoost</h2>
-  <div id="homeWelcome">Welcome to AshMediaBoost!</div>
-  <div>
-    <a href="/login" class="btn">Login</a>
-    <a href="/signup" class="btn">Sign Up</a>
+<div class="container">
+  <h2>Welcome to AshMediaBoost!</h2>
+  <p>All your social media boosting needs in one panel.</p>
+
+  <h3>Platforms</h3>
+  <div class="platforms">
+    <div class="platform instagram">Instagram</div>
+    <div class="platform tiktok">TikTok</div>
+    <div class="platform youtube">YouTube</div>
+    <div class="platform twitter">Twitter</div>
+    <div class="platform telegram">Telegram</div>
   </div>
 </div>
 
-<!-- Hero Section -->
-<div class="hero">
-  <h1>Boost Your Social Media Accounts Instantly!</h1>
-  <p>Fast, Cheap & High-Quality SMM Services for Instagram, Facebook, Twitter, YouTube, TikTok, Telegram & LinkedIn</p>
-  <a href="/signup" class="btn hero-btn">Get Started</a>
-</div>
-
-<!-- Platforms Section -->
-<div class="container platforms-container">
-  <div class="card platform-card">
-    <i class="fab fa-instagram fa-3x"></i>
-    <h3>Instagram</h3>
-  </div>
-  <div class="card platform-card">
-    <i class="fab fa-facebook fa-3x"></i>
-    <h3>Facebook</h3>
-  </div>
-  <div class="card platform-card">
-    <i class="fab fa-twitter fa-3x"></i>
-    <h3>Twitter</h3>
-  </div>
-  <div class="card platform-card">
-    <i class="fab fa-youtube fa-3x"></i>
-    <h3>YouTube</h3>
-  </div>
-  <div class="card platform-card">
-    <i class="fab fa-telegram fa-3x"></i>
-    <h3>Telegram</h3>
-  </div>
-  <div class="card platform-card">
-    <i class="fab fa-tiktok fa-3x"></i>
-    <h3>TikTok</h3>
-  </div>
-  <div class="card platform-card">
-    <i class="fab fa-linkedin fa-3x"></i>
-    <h3>LinkedIn</h3>
-  </div>
-</div>
-
-<script>
-// Show logged-in user if stored in localStorage
-let currentUser = localStorage.getItem("userEmail");
-if(currentUser){
-  document.getElementById("homeWelcome").innerText = "Welcome, " + currentUser.split("@")[0] + "!";
-}
-</script>
-
+<footer>
+  © 2026 AshMediaBoost • Powered by GodSMM
+</footer>
 </body>
-  </html>
+</html>
