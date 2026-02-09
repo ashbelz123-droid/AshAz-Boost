@@ -1,75 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>AshMediaBoost Dashboard</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <meta charset="UTF-8" />
+  <title>AshMediaBoost – Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="/style.css">
+
+  <!-- Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 </head>
 
 <body>
 
-<!-- TOP BAR -->
-<div class="topbar">
-  <h2>🚀 AshMediaBoost</h2>
-  <div id="welcomeMsg">Welcome</div>
-</div>
-
-<!-- WALLET -->
-<div class="wallet-box">
-  <h3 id="walletBalance">Wallet: UGX 0</h3>
-  <input type="number" id="depositAmount" placeholder="Enter amount (min 500)">
-  <div class="deposit-buttons">
-    <button class="mtn" onclick="deposit('MTN')">MTN</button>
-    <button class="airtel" onclick="deposit('AIRTEL')">Airtel</button>
+<!-- ===== TOP BAR ===== -->
+<header class="topbar">
+  <h1>🚀 AshMediaBoost</h1>
+  <div class="user">
+    <span id="userEmail"></span>
+    <button onclick="logout()">Logout</button>
   </div>
-</div>
+</header>
 
-<!-- SERVICES -->
-<div class="section">
-  <h3>📦 Services</h3>
-  <input id="searchInput" onkeyup="filterServices()" placeholder="Search services...">
-  <div class="table-wrap">
-    <table id="servicesTable">
-      <thead>
-        <tr>
-          <th>Platform</th>
-          <th>Service</th>
-          <th>Price</th>
-          <th>Min</th>
-          <th>Max</th>
-          <th>Description</th>
-          <th>Qty</th>
-          <th>Order</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-</div>
+<!-- ===== MAIN ===== -->
+<main class="container">
 
-<!-- ORDERS -->
-<div class="section">
-  <h3>📑 Orders</h3>
-  <div class="table-wrap">
-    <table id="ordersTable">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Platform</th>
-          <th>Service</th>
-          <th>Qty</th>
-          <th>Price</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-</div>
+  <!-- ===== SERVICES ===== -->
+  <section class="card">
+    <h2>📊 Available Services</h2>
 
-<script src="script.js"></script>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Service</th>
+            <th>Min</th>
+            <th>Max</th>
+            <th>Price ($)</th>
+            <th>Order</th>
+          </tr>
+        </thead>
+
+        <tbody id="services">
+          <!-- Loaded by script.js -->
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== ORDER BOX ===== -->
+  <section class="card" id="orderBox" style="display:none;">
+    <h2>🛒 Place Order</h2>
+
+    <input type="text" id="link" placeholder="Enter service link">
+    <input type="number" id="quantity" placeholder="Enter quantity">
+
+    <button class="primary" onclick="placeOrder()">Submit Order</button>
+  </section>
+
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <p>© 2026 AshMediaBoost • Powered by GodSMM</p>
+</footer>
+
+<!-- JS -->
+<script src="/script.js"></script>
+
+<script>
+  // Show logged-in user
+  document.getElementById("userEmail").innerText =
+    localStorage.getItem("user") || "User";
+
+  function logout(){
+    localStorage.removeItem("user");
+    window.location.href = "/login";
+  }
+</script>
+
 </body>
-</html>
+  </html>
