@@ -1,42 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>AshMediaBoost | Login</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>AshMediaBoost Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/style.css">
 </head>
-<body>
 
-<div class="login-container">
-  <h2>AshMediaBoost Login</h2>
-  <input id="email" type="email" placeholder="Email">
-  <input id="password" type="password" placeholder="Password">
-  <button class="btn login-btn" onclick="login()">Login</button>
-  <div id="loginMsg" class="msg"></div>
-</div>
+<body class="auth-body">
 
-<script>
-async function login(){
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  if(!email || !password){
-    document.getElementById("loginMsg").innerText = "Fill all fields!";
-    return;
-  }
-  const res = await fetch("/api/login",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({email,password})
-  });
-  const data = await res.json();
-  if(data.success){
-    localStorage.setItem("userEmail", email);
-    window.location.href = "/dashboard";
-  }else{
-    document.getElementById("loginMsg").innerText = data.error;
-  }
-}
-</script>
+  <div class="auth-box">
+    <h1>AshMediaBoost</h1>
+    <p>Login to your account</p>
 
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+
+    <button onclick="login()">Login</button>
+
+    <p class="small">
+      Don’t have an account?
+      <a href="/signup.html">Sign up</a>
+    </p>
+
+    <p id="msg" class="error"></p>
+  </div>
+
+  <script src="/script.js"></script>
 </body>
 </html>
