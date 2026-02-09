@@ -1,72 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>AshMediaBoost Dashboard</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>AshMediaBoost Dashboard</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
 <header class="topbar">
   <h1>🚀 AshMediaBoost</h1>
-  <div class="user">ashbelz | <a href="login.html">Logout</a></div>
+  <span>Welcome, ashbelz</span>
 </header>
 
-<section class="container">
+<div class="container">
+  <h2>📊 Available Services</h2>
 
-<h2>📊 Available Services</h2>
+  <input type="text" id="search" placeholder="Search services..." />
 
-<table class="services-table">
-  <thead>
-    <tr>
-      <th>Platform</th>
-      <th>Service</th>
-      <th>Min</th>
-      <th>Max</th>
-      <th>Price ($)</th>
-      <th>Order</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <tr>
-      <td>📸 Instagram</td>
-      <td>Followers</td>
-      <td>100</td>
-      <td>10000</td>
-      <td>1.80</td>
-      <td>
-        <button onclick="openOrder('Instagram Followers',1.80)">Order</button>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-</section>
+  <table id="servicesTable">
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Service</th>
+        <th>Min</th>
+        <th>Max</th>
+        <th>Price ($)</th>
+        <th>Order</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
 
 <!-- ORDER MODAL -->
-<div id="orderBox" class="modal">
-  <div class="modal-content">
-    <span class="close" onclick="closeOrder()">×</span>
-    <h3 id="serviceName"></h3>
-
-    <label>Link</label>
-    <input type="text" id="orderLink" placeholder="https://instagram.com/...">
-
-    <label>Quantity</label>
-    <input type="number" id="orderQty" value="100" min="1" oninput="calcPrice()">
-
-    <p>Total Price: <b>$<span id="totalPrice">1.80</span></b></p>
-
-    <button class="confirm">Place Order</button>
+<div id="orderModal">
+  <div class="modalBox">
+    <h3>Place Order</h3>
+    <input id="orderLink" placeholder="Service link">
+    <input id="orderQty" type="number" placeholder="Quantity">
+    <button id="confirmOrder">Confirm Order</button>
+    <button onclick="closeModal()">Cancel</button>
   </div>
 </div>
 
 <footer>
-© 2026 AshMediaBoost • Powered by GodSMM
+  © 2026 AshMediaBoost • Powered by GodSMM
 </footer>
 
 <script src="script.js"></script>
 </body>
-  </html>
+</html>
