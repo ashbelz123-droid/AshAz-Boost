@@ -9,24 +9,25 @@
 </head>
 <body>
 
+<!-- Navbar -->
 <div class="navbar">
   <h2>AshMediaBoost</h2>
-  <div id="userEmail">user@ashmediaboost.com</div>
+  <div id="welcomeMsg">Welcome, User!</div>
+  <div id="walletBalance">Wallet: UGX 0</div>
+  <a href="/login" class="btn">Logout</a>
 </div>
 
 <div class="container">
 
-  <!-- Wallet Card -->
+  <!-- Deposit Card -->
   <div class="card wallet-card">
-    <h3>👤 Wallet Balance</h3>
-    <div id="walletBalance" class="wallet-amount">UGX 0</div>
-
+    <h3>👤 Wallet</h3>
     <input type="number" id="depositAmount" placeholder="Enter amount (min 500 UGX)" min="500">
     <div class="deposit-buttons">
       <button class="mtn" onclick="deposit('MTN')"><i class="fa fa-mobile-alt"></i> Deposit with MTN</button>
       <button class="airtel" onclick="deposit('AIRTEL')"><i class="fa fa-mobile-alt"></i> Deposit with Airtel</button>
     </div>
-    <div class="note">Minimum deposit is <b>500 UGX</b>. Wallet is used automatically when placing orders.</div>
+    <div class="note">Minimum deposit is <b>500 UGX</b>. Wallet is used automatically for orders.</div>
   </div>
 
   <!-- Search / Filter -->
@@ -76,4 +77,4 @@
 
 <script src="script.js"></script>
 </body>
-  </html>
+</html>
