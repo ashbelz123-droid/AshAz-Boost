@@ -1,99 +1,109 @@
 const express = require("express");
-const bodyParser = require("body-parser");
 const axios = require("axios");
-const crypto = require("crypto");
 const path = require("path");
-const app = express();
+require("dotenv").config();
 
-app.use(bodyParser.json());
+const app = express();
+app.use(express.json());
 app.use(express.static("public"));
 
-// Dummy user DB
+const GODSMM_URL = "https://godsmm.com/api/v2";
+const PROFIT_MULTIPLIER = 1.8;
+
+/* ---------------- USERS (TEMP STORAGE) ---------------- */
 let users = {
-  "user@ashmediaboost.com": { password:"123456", wallet:0, orders:[] }
+  "user@ashmediaboost.com": { password: "123456", wallet: 0, orders: [] }
 };
 
-// Login endpoint
-app.post("/api/login",(req,res)=>{
+/* ---------------- AUTH ---------------- */
+app.post("/api/login", (req,res)=>{
   const { email, password } = req.body;
   if(users[email] && users[email].password === password){
-    return res.json({ success:true });
-  }else{
-    return res.json({ error:"Invalid email or password" });
+    res.json({ success:true });
+  } else {
+    res.json({ error:"Invalid login" });
   }
 });
 
-// Signup endpoint
-app.post("/api/signup",(req,res)=>{
+app.post("/api/signup", (req,res)=>{
   const { email, password } = req.body;
-  if(users[email]) return res.json({ error:"User already exists" });
+  if(users[email]) return res.json({ error:"User exists" });
   users[email] = { password, wallet:0, orders:[] };
-  return res.json({ success:true });
+  res.json({ success:true });
 });
 
-/* =================
-   PesaPal Integration
-================= */
+/* ---------------- GODSMM SERVICES ---------------- */
+app.get("/api/services", async (req,res)=>{
+  try{
+    const r = await axios.post(GODSMM_URL, {
+      key: process.env.GODSMM_API_KEY,
+      action: "services"
+    });
 
-const PESAPAL_CONSUMER_KEY = "YOUR_CONSUMER_KEY";
-const PESAPAL_CONSUMER_SECRET = "YOUR_CONSUMER_SECRET";
-const PESAPAL_SANDBOX = true; // true for testing
+    const services = r.data.map(s => ({
+      id: s.service,
+      category: s.Category,
+      name: s.name,
+      min: s.min,
+      max: s.max,
+      rate: Math.ceil(s.rate * PROFIT_MULTIPLIER),
+      type: s.type
+    }));
 
-const PESAPAL_BASE = PESAPAL_SANDBOX
-  ? "https://sandbox.pesapal.com/api"
-  : "https://www.pesapal.com/API";
+    res.json(services);
+  }catch(err){
+    console.log(err.message);
+    res.status(500).json({ error:"Service fetch failed" });
+  }
+});
 
-// Create payment request
-app.post("/api/deposit", async (req,res)=>{
-  const { email, amount, provider } = req.body;
+/* ---------------- PLACE ORDER ---------------- */
+app.post("/api/order", async (req,res)=>{
+  const { email, service, link, quantity } = req.body;
   if(!users[email]) return res.json({ error:"User not found" });
 
-  const orderId = Date.now(); // unique ID
-  const callback_url = `http://yourdomain.com/api/pesapal-callback?email=${email}`;
-
-  // Build XML payload
-  const postData = `
-    <PesapalDirectOrderInfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
-      Amount="${amount}" 
-      Description="Wallet deposit for ${email}" 
-      Type="MERCHANT" 
-      Reference="${orderId}" 
-      Currency="UGX" 
-      CallbackURL="${callback_url}" 
-      xmlns="http://www.pesapal.com"/>
-  `;
-
   try{
-    const resp = await axios.post(`${PESAPAL_BASE}/PostPesapalDirectOrderV4`, postData, {
-      headers:{ "Content-Type":"application/xml" },
-      auth:{ username:PESAPAL_CONSUMER_KEY, password:PESAPAL_CONSUMER_SECRET }
+    const order = await axios.post(GODSMM_URL, {
+      key: process.env.GODSMM_API_KEY,
+      action: "add",
+      service,
+      link,
+      quantity
     });
-    // Returns iframe link
-    res.json({ success:true, url:resp.data });
+
+    users[email].orders.push({
+      localId: Date.now(),
+      apiOrderId: order.data.order,
+      service,
+      quantity,
+      status: "Pending"
+    });
+
+    res.json({ success:true, orderId: order.data.order });
   }catch(err){
-    console.log(err.response?.data || err.message);
-    res.json({ error:"Payment request failed" });
+    console.log(err.message);
+    res.status(500).json({ error:"Order failed" });
   }
 });
 
-// PesaPal callback (update wallet)
-app.post("/api/pesapal-callback", (req,res)=>{
-  const { email, transaction_id, status, amount } = req.body;
-  if(status==="Completed" && users[email]){
-    users[email].wallet += parseInt(amount);
-    res.send("Wallet updated");
-  }else{
-    res.send("Payment failed or user not found");
+/* ---------------- ORDER STATUS ---------------- */
+app.get("/api/order-status/:id", async (req,res)=>{
+  try{
+    const r = await axios.post(GODSMM_URL, {
+      key: process.env.GODSMM_API_KEY,
+      action: "status",
+      order: req.params.id
+    });
+    res.json(r.data);
+  }catch(err){
+    res.status(500).json({ error:"Status check failed" });
   }
 });
 
-/* =================
-   Routes
-================= */
-app.get("/", (req,res)=>res.sendFile(path.join(__dirname,"public","home.html")));
-app.get("/login", (req,res)=>res.sendFile(path.join(__dirname,"public","login.html")));
-app.get("/signup", (req,res)=>res.sendFile(path.join(__dirname,"public","signup.html")));
-app.get("/dashboard", (req,res)=>res.sendFile(path.join(__dirname,"public","dashboard.html")));
+/* ---------------- ROUTES ---------------- */
+app.get("/", (_,res)=>res.sendFile(path.join(__dirname,"public","home.html")));
+app.get("/login", (_,res)=>res.sendFile(path.join(__dirname,"public","login.html")));
+app.get("/signup", (_,res)=>res.sendFile(path.join(__dirname,"public","signup.html")));
+app.get("/dashboard", (_,res)=>res.sendFile(path.join(__dirname,"public","dashboard.html")));
 
-app.listen(10000, ()=>console.log("Server running on port 10000"));
+app.listen(process.env.PORT, ()=>console.log("Server running"));
