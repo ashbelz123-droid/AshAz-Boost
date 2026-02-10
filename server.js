@@ -1,12 +1,14 @@
 const express = require("express");
 const path = require("path");
+const auth = require("./auth"); // backend auth logic
 
 const app = express();
 
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static files from public
+// Serve frontend files
 app.use(express.static(path.join(__dirname, "public")));
 
 // Health check
