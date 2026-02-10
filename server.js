@@ -3,14 +3,13 @@ const path = require("path");
 
 const app = express();
 
-// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve public files
+// Serve static files from public
 app.use(express.static(path.join(__dirname, "public")));
 
-// Test route (very important)
+// Health check
 app.get("/health", (req, res) => {
   res.send("AshMediaBoost server is LIVE ✅");
 });
@@ -20,9 +19,8 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// Render PORT (THIS FIXES YOUR ERROR)
+// Start server on Render port
 const PORT = process.env.PORT || 3000;
-
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
